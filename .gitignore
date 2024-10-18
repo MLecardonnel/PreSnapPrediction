@@ -9,6 +9,8 @@ __pycache__/
 # Distribution / packaging
 .Python
 build/
+data/*
+!data/.gitkeep
 develop-eggs/
 dist/
 downloads/
@@ -16,6 +18,8 @@ eggs/
 .eggs/
 lib/
 lib64/
+models/*
+!models/.gitkeep
 parts/
 sdist/
 var/
