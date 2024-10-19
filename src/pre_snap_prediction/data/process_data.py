@@ -1,5 +1,41 @@
+from pathlib import Path
+
 import numpy as np
 import polars as pl
+
+data_path = (Path(__file__).parents[3] / "data").as_posix() + "/"
+
+
+def read_tracking_csv(weeks: int = 9) -> pl.DataFrame:
+    """Reads and combines tracking data CSV files for a specified number of weeks.
+
+    Parameters
+    ----------
+    weeks : int, optional
+        The number of weeks of tracking data to read, by default 9
+
+    Returns
+    -------
+    pl.DataFrame
+        A Polars DataFrame containing the concatenated tracking data for the specified number of weeks.
+
+    Raises
+    ------
+    ValueError
+        If the `weeks` parameter is not between 1 and 9.
+    """
+    if weeks >= 1 and weeks <= 9:
+        tracking = pl.concat(
+            [
+                pl.read_csv(data_path + f"tracking_week_{i}.csv", null_values="NA").with_columns(
+                    pl.lit(i).alias("week")
+                )
+                for i in range(1, weeks + 1)
+            ]
+        )
+        return tracking
+    else:
+        raise ValueError("weeks should be between 1 and 9")
 
 
 def inverse_left_directed_plays(data: pl.DataFrame) -> pl.DataFrame:
@@ -201,7 +237,7 @@ def compute_route_features(processed_route_tracking: pl.DataFrame) -> pl.DataFra
         pl.col("coefficients").list.to_struct(fields=["coef_a", "coef_b", "coef_c"])
     ).unnest("coefficients")
 
-    route_features = processed_route_tracking.group_by(["gameId", "playId", "nflId"]).agg(
+    route_features = processed_route_tracking.group_by(["week", "gameId", "playId", "nflId"]).agg(
         [
             pl.col("relative_x").median().alias("x_median"),
             pl.col("relative_x").std().alias("x_std"),
