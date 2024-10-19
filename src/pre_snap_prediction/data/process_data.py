@@ -3,17 +3,18 @@ import polars as pl
 
 
 def inverse_left_directed_plays(data: pl.DataFrame) -> pl.DataFrame:
-    """_summary_
+    """Adjusts the coordinates of plays where the play direction is "left" to be consistent
+    with plays moving to the right by inverting the x and y coordinates accordingly.
 
     Parameters
     ----------
     data : pl.DataFrame
-        _description_
+        A Polars DataFrame containing player tracking data.
 
     Returns
     -------
     pl.DataFrame
-        _description_
+        A modified Polars DataFrame where the x and y coordinates have been adjusted.
     """
     left_playDirection = pl.col("playDirection") == "left"
 
@@ -28,19 +29,19 @@ def inverse_left_directed_plays(data: pl.DataFrame) -> pl.DataFrame:
 
 
 def get_route_tracking(tracking: pl.DataFrame, player_play: pl.DataFrame) -> pl.DataFrame:
-    """_summary_
+    """Filters and joins tracking data with player play information to obtain route-specific tracking data.
 
     Parameters
     ----------
     tracking : pl.DataFrame
-        _description_
+        A Polars DataFrame containing player tracking data.
     player_play : pl.DataFrame
-        _description_
+        A Polars DataFrame containing player play information
 
     Returns
     -------
     pl.DataFrame
-        _description_
+        A Polars DataFrame containing the tracking data for players who were running routes.
     """
     filtered_player_play = player_play.filter(pl.col("wasRunningRoute") == 1)
 
@@ -54,19 +55,19 @@ def get_route_tracking(tracking: pl.DataFrame, player_play: pl.DataFrame) -> pl.
 
 
 def get_route_direction(data: pl.DataFrame, max_route_frame: int = 30) -> pl.DataFrame:
-    """_summary_
+    """Determines the direction of player routes by comparing player positions before and after the snap.
 
     Parameters
     ----------
     data : pl.DataFrame
-        _description_
+        A Polars DataFrame containing tracking data
     max_route_frame : int, optional
-        _description_, by default 30
+        The maximum number of frames after the snap to consider when calculating route direction, by default 30
 
     Returns
     -------
     pl.DataFrame
-        _description_
+        A modified Polars DataFrame with a route direction column.
     """
     start_positions = (
         data.filter(pl.col("frameType") == "BEFORE_SNAP")
@@ -100,17 +101,17 @@ def get_route_direction(data: pl.DataFrame, max_route_frame: int = 30) -> pl.Dat
 
 
 def inverse_right_route(data: pl.DataFrame) -> pl.DataFrame:
-    """_summary_
+    """Adjusts the y-coordinate of routes that move to the right to mirror those moving to the left.
 
     Parameters
     ----------
     data : pl.DataFrame
-        _description_
+        A Polars DataFrame containing player tracking data.
 
     Returns
     -------
     pl.DataFrame
-        _description_
+        A Polars DataFrame where the y-coordinate has been adjusted for players running routes to the right.
     """
     right_route = ~pl.col("route_left")
 
@@ -120,19 +121,19 @@ def inverse_right_route(data: pl.DataFrame) -> pl.DataFrame:
 
 
 def process_route_tracking(route_tracking: pl.DataFrame, max_route_frame: int = 30) -> pl.DataFrame:
-    """_summary_
+    """Processes player route tracking data by calculating relative positions from their starting positions.
 
     Parameters
     ----------
     route_tracking : pl.DataFrame
-        _description_
+        A Polars DataFrame containing tracking data.
     max_route_frame : int, optional
-        _description_, by default 30
+        The maximum number of frames to consider after the snap for analyzing the route, by default 30
 
     Returns
     -------
     pl.DataFrame
-        _description_
+        A Polars DataFrame containing the processed route tracking data
     """
     start_positions = (
         route_tracking.filter(pl.col("frameType") == "BEFORE_SNAP")
@@ -180,17 +181,17 @@ def _get_position_from_percent(col: str, percent: float, non_negative: bool = Fa
 
 
 def compute_route_features(processed_route_tracking: pl.DataFrame) -> pl.DataFrame:
-    """_summary_
+    """Computes advanced route features for players based on their processed route tracking data.
 
     Parameters
     ----------
     processed_route_tracking : pl.DataFrame
-        _description_
+        A Polars DataFrame containing the processed tracking data.
 
     Returns
     -------
     pl.DataFrame
-        _description_
+        A Polars DataFrame containing various computed route features for each player in each play.
     """
     quadratic_fit_results = processed_route_tracking.group_by(["gameId", "playId", "nflId"]).agg(
         pl.map_groups(exprs=["relative_x", "relative_y"], function=_quadratic_fit).alias("coefficients")

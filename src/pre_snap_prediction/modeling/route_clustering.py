@@ -3,42 +3,38 @@ from sklearn.cluster import AffinityPropagation
 from sklearn.ensemble import IsolationForest
 
 
-def train_outliers_model(data: pl.DataFrame, contamination: float = 0.1) -> IsolationForest:
-    """_summary_
+def train_outliers_model(data: pl.DataFrame) -> IsolationForest:
+    """Trains an Isolation Forest model to detect outliers in the provided dataset.
 
     Parameters
     ----------
     data : pl.DataFrame
-        _description_
-    contamination : float, optional
-        _description_, by default 0.1
+        A Polars DataFrame containing the dataset to train the outlier detection model.
 
     Returns
     -------
     IsolationForest
-        _description_
+        An Isolation Forest model trained on the input data.
     """
-    outliers_model = IsolationForest(random_state=0, contamination=contamination).fit(
-        data.drop(["gameId", "playId", "nflId"]).to_numpy()
-    )
+    outliers_model = IsolationForest(random_state=0).fit(data.drop(["gameId", "playId", "nflId"]).to_numpy())
 
     return outliers_model
 
 
 def predict_outliers(data: pl.DataFrame, outliers_model: IsolationForest) -> pl.DataFrame:
-    """_summary_
+    """Uses a trained Isolation Forest model to predict outliers (anomalies) in the dataset.
 
     Parameters
     ----------
     data : pl.DataFrame
-        _description_
+        A Polars DataFrame containing the dataset for which outliers need to be predicted.
     outliers_model : IsolationForest
-        _description_
+        A pre-trained Isolation Forest model that will be used to predict outliers in the dataset.
 
     Returns
     -------
     pl.DataFrame
-        _description_
+        The input Polars DataFrame with an additional "anomaly" column.
     """
     predictions = outliers_model.predict(data.drop(["gameId", "playId", "nflId"]).to_numpy())
 
@@ -50,17 +46,17 @@ def predict_outliers(data: pl.DataFrame, outliers_model: IsolationForest) -> pl.
 
 
 def remove_outliers(data: pl.DataFrame) -> pl.DataFrame:
-    """_summary_
+    """Removes outlier data points from the DataFrame based on the "anomaly" column.
 
     Parameters
     ----------
     data : pl.DataFrame
-        _description_
+        A Polars DataFrame containing the dataset with an "anomaly" column.
 
     Returns
     -------
     pl.DataFrame
-        _description_
+        A Polars DataFrame with outliers removed and the "anomaly" column dropped.
     """
     valid_data = data.filter(pl.col("anomaly") == 1).drop("anomaly")
 
@@ -68,21 +64,22 @@ def remove_outliers(data: pl.DataFrame) -> pl.DataFrame:
 
 
 def train_route_clustering(data: pl.DataFrame, damping=0.9, preference=-50) -> AffinityPropagation:
-    """_summary_
+    """Trains an Affinity Propagation model to cluster player route data based on their movement patterns.
 
     Parameters
     ----------
     data : pl.DataFrame
-        _description_
+        A Polars DataFrame containing the route data to be clustered.
     damping : float, optional
-        _description_, by default 0.9
+        A value between 0.5 and 1 that controls the extent to which the current clustering is influenced
+        by the previous iteration, by default 0.9
     preference : int, optional
-        _description_, by default -50
+        Controls the number of clusters, by default -50
 
     Returns
     -------
     AffinityPropagation
-        _description_
+        A trained Affinity Propagation model that can be used to predict clusters for route data.
     """
     clustering_model = AffinityPropagation(random_state=0, damping=damping, preference=preference).fit(
         data.drop(["gameId", "playId", "nflId"]).to_numpy()
@@ -92,19 +89,19 @@ def train_route_clustering(data: pl.DataFrame, damping=0.9, preference=-50) -> A
 
 
 def predict_route_cluters(data: pl.DataFrame, clustering_model: AffinityPropagation) -> pl.DataFrame:
-    """_summary_
+    """Predicts route clusters for player data using a pre-trained Affinity Propagation model.
 
     Parameters
     ----------
     data : pl.DataFrame
-        _description_
+        A Polars DataFrame containing the dataset for which route clusters need to be predicted.
     clustering_model : AffinityPropagation
-        _description_
+        A pre-trained Affinity Propagation model used to predict the clusters for the route data.
 
     Returns
     -------
     pl.DataFrame
-        _description_
+        A Polars DataFrame with an additional "cluster" column indicating the cluster assigned to each route.
     """
     predictions = clustering_model.predict(data.drop(["gameId", "playId", "nflId"]).to_numpy())
 
@@ -115,20 +112,20 @@ def predict_route_cluters(data: pl.DataFrame, clustering_model: AffinityPropagat
     return data
 
 
-def join_clusters_to_data(data, clusters_route):
-    """_summary_
+def join_clusters_to_data(data: pl.DataFrame, clusters_route: pl.DataFrame) -> pl.DataFrame:
+    """Joins the cluster labels with the original dataset based on game, play, and player identifiers.
 
     Parameters
     ----------
-    data : _type_
-        _description_
-    clusters_route : _type_
-        _description_
+    data : pl.DataFrame
+        The original Polars DataFrame containing the dataset with game, play, and player-level data.
+    clusters_route : pl.DataFrame
+        A Polars DataFrame containing the route clustering results.
 
     Returns
     -------
-    _type_
-        _description_
+    pl.DataFrame
+        A Polars DataFrame with the original data and an additional "cluster" column.
     """
     clusters_data = data.join(
         clusters_route.select(["gameId", "playId", "nflId", "cluster"]), on=["gameId", "playId", "nflId"], how="left"
