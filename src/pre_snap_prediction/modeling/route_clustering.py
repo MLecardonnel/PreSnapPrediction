@@ -216,20 +216,20 @@ def get_clusters_reception_zones(player_play: pl.DataFrame, clusters_route_track
 
     clusters_reception_zones = clusters_reception_zones.with_columns(
         [
-            pl.when(pl.col("relative_x_mean") - pl.col("relative_x_min") < 1)
-            .then(pl.col("relative_x_mean") - 1)
+            pl.when(pl.col("relative_x_mean") - pl.col("relative_x_min") < 2)
+            .then(pl.col("relative_x_mean") - 2)
             .otherwise(pl.col("relative_x_min"))
             .alias("relative_x_min"),
-            pl.when(pl.col("relative_x_max") - pl.col("relative_x_mean") < 1)
-            .then(pl.col("relative_x_mean") + 1)
+            pl.when(pl.col("relative_x_max") - pl.col("relative_x_mean") < 2)
+            .then(pl.col("relative_x_mean") + 2)
             .otherwise(pl.col("relative_x_max"))
             .alias("relative_x_max"),
-            pl.when(pl.col("relative_y_mean") - pl.col("relative_y_min") < 1)
-            .then(pl.col("relative_y_mean") - 1)
+            pl.when(pl.col("relative_y_mean") - pl.col("relative_y_min") < 2)
+            .then(pl.col("relative_y_mean") - 2)
             .otherwise(pl.col("relative_y_min"))
             .alias("relative_y_min"),
-            pl.when(pl.col("relative_y_max") - pl.col("relative_y_mean") < 1)
-            .then(pl.col("relative_y_mean") + 1)
+            pl.when(pl.col("relative_y_max") - pl.col("relative_y_mean") < 2)
+            .then(pl.col("relative_y_mean") + 2)
             .otherwise(pl.col("relative_y_max"))
             .alias("relative_y_max"),
             (pl.col("route_frameId_mean") * 0.1).alias("route_time_mean"),

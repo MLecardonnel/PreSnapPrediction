@@ -90,7 +90,7 @@ def get_route_tracking(tracking: pl.DataFrame, player_play: pl.DataFrame) -> pl.
     return route_tracking
 
 
-def get_route_direction(data: pl.DataFrame, max_route_frame: int = 30) -> pl.DataFrame:
+def get_route_direction(data: pl.DataFrame, max_route_frame: int = 50) -> pl.DataFrame:
     """Determines the direction of player routes by comparing player positions before and after the snap.
 
     Parameters
@@ -98,7 +98,7 @@ def get_route_direction(data: pl.DataFrame, max_route_frame: int = 30) -> pl.Dat
     data : pl.DataFrame
         A Polars DataFrame containing tracking data
     max_route_frame : int, optional
-        The maximum number of frames after the snap to consider when calculating route direction, by default 30
+        The maximum number of frames after the snap to consider when calculating route direction, by default 50
 
     Returns
     -------
@@ -156,21 +156,27 @@ def inverse_right_route(data: pl.DataFrame) -> pl.DataFrame:
     return data
 
 
-def process_route_tracking(route_tracking: pl.DataFrame, max_route_frame: int = 30) -> pl.DataFrame:
+def process_route_tracking(
+    route_tracking: pl.DataFrame, player_play: pl.DataFrame, max_route_frame: int = 50
+) -> pl.DataFrame:
     """Processes player route tracking data by calculating relative positions from their starting positions.
 
     Parameters
     ----------
     route_tracking : pl.DataFrame
         A Polars DataFrame containing tracking data.
+    player_play : pl.DataFrame
+        A Polars DataFrame containing player play information
     max_route_frame : int, optional
-        The maximum number of frames to consider after the snap for analyzing the route, by default 30
+        The maximum number of frames to consider after the snap for analyzing the route, by default 50
 
     Returns
     -------
     pl.DataFrame
         A Polars DataFrame containing the processed route tracking data
     """
+    targeted_receiver = player_play.filter(pl.col("wasTargettedReceiver") == 1)
+
     start_positions = (
         route_tracking.filter(pl.col("frameType") == "BEFORE_SNAP")
         .group_by(["gameId", "playId", "nflId"])
@@ -196,6 +202,28 @@ def process_route_tracking(route_tracking: pl.DataFrame, max_route_frame: int = 
     )
 
     processed_route_tracking = processed_route_tracking.filter(pl.col("route_frameId") <= max_route_frame)
+
+    reception_clusters_frames = processed_route_tracking.filter(pl.col("event") == "pass_arrived")
+    reception_clusters_frames = reception_clusters_frames.with_columns(
+        pl.col("route_frameId").alias("reception_frameId")
+    )
+    reception_clusters_frames = reception_clusters_frames.select(
+        ["gameId", "playId", "nflId", "reception_frameId"]
+    ).join(
+        targeted_receiver.select(["gameId", "playId", "nflId"]),
+        on=["gameId", "playId", "nflId"],
+        how="inner",
+    )
+
+    processed_route_tracking = processed_route_tracking.join(
+        reception_clusters_frames,
+        on=["gameId", "playId", "nflId"],
+        how="left",
+    )
+
+    processed_route_tracking = processed_route_tracking.filter(
+        (pl.col("reception_frameId").is_null()) | (pl.col("route_frameId") <= pl.col("reception_frameId"))
+    ).drop("reception_frameId")
 
     return processed_route_tracking
 

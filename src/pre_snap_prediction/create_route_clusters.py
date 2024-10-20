@@ -18,7 +18,7 @@ if __name__ == "__main__":
     route_tracking = process_data.get_route_tracking(inverse_tracking, player_play)
     route_tracking = process_data.get_route_direction(route_tracking)
     route_tracking = process_data.inverse_right_route(route_tracking)
-    route_tracking = process_data.process_route_tracking(route_tracking)
+    route_tracking = process_data.process_route_tracking(route_tracking, player_play)
 
     route_features = process_data.compute_route_features(route_tracking)
 
