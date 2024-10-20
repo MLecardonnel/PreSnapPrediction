@@ -170,11 +170,11 @@ def get_modified_route_mode(player_play: pl.DataFrame, clusters_route_tracking: 
         "WHEEL": "wheelangle",
     }
 
-    route_mode = data.group_by(["cluster"]).agg(
+    clusters_route_mode = data.group_by(["cluster"]).agg(
         pl.col("routeRan").mode().get(0).replace(route_conversion).alias("route_mode"),
     )
 
-    return route_mode
+    return clusters_route_mode
 
 
 def get_clusters_reception_zones(player_play: pl.DataFrame, clusters_route_tracking: pl.DataFrame) -> pl.DataFrame:
@@ -232,6 +232,7 @@ def get_clusters_reception_zones(player_play: pl.DataFrame, clusters_route_track
             .then(pl.col("relative_y_mean") + 1)
             .otherwise(pl.col("relative_y_max"))
             .alias("relative_y_max"),
+            (pl.col("route_frameId_mean") * 0.1).alias("route_time_mean"),
         ]
     )
 
