@@ -1,7 +1,7 @@
 from pathlib import Path
 
-import pandas as pd
 import plotly.graph_objects as go
+import polars as pl
 
 animations_path = str(Path(__file__).parents[3] / "reports/animations")
 
@@ -192,7 +192,7 @@ class Field:
         self.fig = self._draw_line_on_field(self.fig, absoluteYardlineNumber, "#0070C0", 2)
         self.fig = self._draw_line_on_field(self.fig, yard_line_first_down, "#E9D11F", 2)
 
-    def create_animation(self, play_tracking: pd.DataFrame) -> None:
+    def create_animation(self, play_tracking: pl.DataFrame) -> None:
         """Create an animation for player movements during a play.
 
         Parameters
@@ -203,33 +203,22 @@ class Field:
         frames = []
         steps = []
         for frame_id in play_tracking["frameId"].unique():
-            frame_tracking = play_tracking[play_tracking["frameId"] == frame_id]
+            frame_tracking = play_tracking.filter(pl.col("frameId") == frame_id)
 
-            ball_tracking = frame_tracking[frame_tracking["nflId"].isna()]
+            ball_tracking = frame_tracking.filter(pl.col("nflId").is_null())
 
-            players_tracking = frame_tracking[~frame_tracking["nflId"].isna()]
-            defense_tracking = players_tracking[(players_tracking["is_defense"])]
-            offense_tracking = players_tracking[(~players_tracking["is_defense"])]
+            players_tracking = frame_tracking.filter(pl.col("nflId").is_not_null())
+            defense_tracking = players_tracking.filter(pl.col("is_defense"))
+            offense_tracking = players_tracking.filter(~pl.col("is_defense"))
 
             data = []
 
             data.append(
                 go.Scatter(
-                    x=offense_tracking["x"],
-                    y=offense_tracking["y"],
+                    x=defense_tracking["x"].to_numpy(),
+                    y=defense_tracking["y"].to_numpy(),
                     mode="markers",
                     marker={"size": 10, "color": "black"},
-                    name="offense",
-                    hoverinfo="none",
-                ),
-            )
-
-            data.append(
-                go.Scatter(
-                    x=defense_tracking["x"],
-                    y=defense_tracking["y"],
-                    mode="markers",
-                    marker={"size": 10, "color": "white"},
                     name="defense",
                     hoverinfo="none",
                 ),
@@ -237,8 +226,19 @@ class Field:
 
             data.append(
                 go.Scatter(
-                    x=ball_tracking["x"],
-                    y=ball_tracking["y"],
+                    x=offense_tracking["x"].to_numpy(),
+                    y=offense_tracking["y"].to_numpy(),
+                    mode="markers",
+                    marker={"size": 10, "color": "white"},
+                    name="offense",
+                    hoverinfo="none",
+                ),
+            )
+
+            data.append(
+                go.Scatter(
+                    x=ball_tracking["x"].to_numpy(),
+                    y=ball_tracking["y"].to_numpy(),
                     mode="markers",
                     marker={"size": 10, "color": "brown", "symbol": "diamond-wide"},
                     name="ball",
