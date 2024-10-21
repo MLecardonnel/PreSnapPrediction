@@ -33,9 +33,6 @@ class Field:
 
         fig = go.Figure()
 
-        fig = self._draw_numbers_on_field(fig, field_width - 5)
-        fig = self._draw_numbers_on_field(fig, 5)
-
         fig = self._draw_rectangle_on_field(fig, x0=0, y0=0, x1=field_length, y1=field_width, color=self.color_field)
         fig = self._draw_rectangle_on_field(
             fig, x0=0, y0=0, x1=self.field_subdivision, y1=field_width, color=self.color_endzone
@@ -48,6 +45,9 @@ class Field:
             y1=field_width,
             color=self.color_endzone,
         )
+
+        fig = self._draw_numbers_on_field(fig, field_width - 5)
+        fig = self._draw_numbers_on_field(fig, 5)
 
         for i in range(2, 23):
             fig = self._draw_line_on_field(
@@ -121,15 +121,20 @@ class Field:
         numbers_on_field = ["10", "20", "30", "40", "50", "40", "30", "20", "10"]
 
         for i in range(len(numbers_on_field)):
-            fig.add_annotation(
-                x=(i + 2) * self.field_subdivision,
-                y=y,
-                text=numbers_on_field[i],
-                showarrow=False,
-                font={
-                    "size": 25,
-                    "color": self.color_lines,
+            fig.add_shape(
+                x0=(i + 2) * self.field_subdivision,
+                x1=(i + 2) * self.field_subdivision,
+                y0=y,
+                y1=y,
+                layer="below",
+                label={
+                    "text": numbers_on_field[i],
+                    "font": {
+                        "size": 25,
+                        "color": self.color_lines,
+                    },
                 },
+                opacity=0,
             )
 
         return fig
@@ -232,11 +237,27 @@ class Field:
             opacity=0.7,
             fillcolor="PaleTurquoise",
             line_color="LightSeaGreen",
-            label=dict(
-                text=f"~{round(route_time_mean,1)}s",
-                padding=abs(relative_x_max - relative_x_min) * 5,
-                font=dict(color="Teal"),
-            ),
+            label={
+                "text": f"~{round(route_time_mean,1)}s",
+                "padding": abs(relative_x_max - relative_x_min) * 5,
+                "font": {"color": "Teal"},
+            },
+        )
+
+    def _create_scatter_route(self, route_tracking: pl.DataFrame) -> go.Scatter:
+        route_tracking = route_tracking.with_columns(pl.col("frameId").rank().alias("route_frameId"))
+        route_tracking = route_tracking.filter(pl.col("route_frameId") <= pl.col("route_frameId_mean"))
+
+        return go.Scatter(
+            x=route_tracking["x"].to_numpy(),
+            y=route_tracking["y"].to_numpy(),
+            mode="lines",
+            line={
+                "color": "IndianRed",
+                "width": 3,
+            },
+            opacity=0.5,
+            showlegend=False,
         )
 
     def create_animation(self, play_tracking: pl.DataFrame) -> None:
@@ -247,6 +268,7 @@ class Field:
         play_tracking : pd.DataFrame
             DataFrame containing tracking data for players during the play.
         """
+        routes_traces = []
         if "cluster" in play_tracking.columns:
             route_players = (
                 play_tracking.filter(pl.col("frameType") == "BEFORE_SNAP", pl.col("cluster").is_not_null())
@@ -272,6 +294,12 @@ class Field:
                     x, y, relative_x_min, relative_x_max, relative_y_min, relative_y_max, route_time_mean
                 )
 
+            routes_tracking = play_tracking.filter(pl.col("frameType") == "AFTER_SNAP", pl.col("cluster").is_not_null())
+
+            for player in routes_tracking["nflId"].unique():
+                route_tracking = routes_tracking.filter(pl.col("nflId") == player)
+                routes_traces.append(self._create_scatter_route(route_tracking))
+
         frames = []
         steps = []
         for frame_id in play_tracking["frameId"].unique():
@@ -283,7 +311,7 @@ class Field:
             defense_tracking = players_tracking.filter(pl.col("is_defense"))
             offense_tracking = players_tracking.filter(~pl.col("is_defense"))
 
-            data = []
+            data = [] + routes_traces
 
             data.append(
                 go.Scatter(
