@@ -202,9 +202,9 @@ class Field:
         relative_y_max: float,
         route_time_mean: float,
     ) -> None:
-        if x + relative_x_min > 120:
-            x1 = 120 + (relative_x_max - relative_x_min) / 2
-            x0 = 120 - (relative_x_max - relative_x_min) / 2
+        if x + relative_x_min > self.field_length:
+            x1 = self.field_length + (relative_x_max - relative_x_min) / 2
+            x0 = self.field_length - (relative_x_max - relative_x_min) / 2
         elif x + relative_x_min < 0:
             x1 = (relative_x_max - relative_x_min) / 2
             x0 = -(relative_x_max - relative_x_min) / 2
@@ -212,9 +212,9 @@ class Field:
             x1 = x + relative_x_max
             x0 = x + relative_x_min
 
-        if y + relative_y_min > 53.3:
-            y1 = 53.3 + (relative_y_max - relative_y_min) / 2
-            y0 = 53.3 - (relative_y_max - relative_y_min) / 2
+        if y + relative_y_min > self.field_width:
+            y1 = self.field_width + (relative_y_max - relative_y_min) / 2
+            y0 = self.field_width - (relative_y_max - relative_y_min) / 2
         elif y + relative_y_min < 0:
             y1 = (relative_y_max - relative_y_min) / 2
             y0 = -(relative_y_max - relative_y_min) / 2
