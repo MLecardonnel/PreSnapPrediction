@@ -192,6 +192,53 @@ class Field:
         self.fig = self._draw_line_on_field(self.fig, absoluteYardlineNumber, "#0070C0", 2)
         self.fig = self._draw_line_on_field(self.fig, yard_line_first_down, "#E9D11F", 2)
 
+    def _draw_reception_zone(
+        self,
+        x: float,
+        y: float,
+        relative_x_min: float,
+        relative_x_max: float,
+        relative_y_min: float,
+        relative_y_max: float,
+        route_time_mean: float,
+    ) -> None:
+        if x + relative_x_min > 120:
+            x1 = 120 + (relative_x_max - relative_x_min) / 2
+            x0 = 120 - (relative_x_max - relative_x_min) / 2
+        elif x + relative_x_min < 0:
+            x1 = (relative_x_max - relative_x_min) / 2
+            x0 = -(relative_x_max - relative_x_min) / 2
+        else:
+            x1 = x + relative_x_max
+            x0 = x + relative_x_min
+
+        if y + relative_y_min > 53.3:
+            y1 = 53.3 + (relative_y_max - relative_y_min) / 2
+            y0 = 53.3 - (relative_y_max - relative_y_min) / 2
+        elif y + relative_y_min < 0:
+            y1 = (relative_y_max - relative_y_min) / 2
+            y0 = -(relative_y_max - relative_y_min) / 2
+        else:
+            y1 = y + relative_y_max
+            y0 = y + relative_y_min
+
+        self.fig.add_shape(
+            type="circle",
+            layer="below",
+            x0=x0,
+            x1=x1,
+            y0=y0,
+            y1=y1,
+            opacity=0.7,
+            fillcolor="PaleTurquoise",
+            line_color="LightSeaGreen",
+            label=dict(
+                text=f"~{round(route_time_mean,1)}s",
+                padding=abs(relative_x_max - relative_x_min) * 5,
+                font=dict(color="Teal"),
+            ),
+        )
+
     def create_animation(self, play_tracking: pl.DataFrame) -> None:
         """Create an animation for player movements during a play.
 
@@ -200,6 +247,31 @@ class Field:
         play_tracking : pd.DataFrame
             DataFrame containing tracking data for players during the play.
         """
+        if "cluster" in play_tracking.columns:
+            route_players = (
+                play_tracking.filter(pl.col("frameType") == "BEFORE_SNAP", pl.col("cluster").is_not_null())
+                .group_by(["gameId", "playId", "nflId"])
+                .last()
+            )
+
+            for i in range(len(route_players)):
+                x, y, relative_x_min, relative_x_max, relative_y_min, relative_y_max, route_time_mean = (
+                    route_players.select(
+                        [
+                            "x",
+                            "y",
+                            "relative_x_min",
+                            "relative_x_max",
+                            "relative_y_min",
+                            "relative_y_max",
+                            "route_time_mean",
+                        ]
+                    ).row(i)
+                )
+                self._draw_reception_zone(
+                    x, y, relative_x_min, relative_x_max, relative_y_min, relative_y_max, route_time_mean
+                )
+
         frames = []
         steps = []
         for frame_id in play_tracking["frameId"].unique():
