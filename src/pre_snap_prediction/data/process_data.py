@@ -233,10 +233,12 @@ def _quadratic_fit(args: list[pl.Series]) -> list[float]:
     return [coefficients[0], coefficients[1], coefficients[2]]
 
 
-def _get_position_from_percent(col: str, percent: float, non_negative: bool = False) -> pl.Series:
-    position = (pl.col(col).count() * percent).cast(pl.Int64)
+def _get_position_value(col: str, position: int, non_negative: bool = False) -> pl.Series:
+    valid_position = (
+        pl.when(pl.col(col).count() > position).then(position).otherwise(pl.col(col).count() - 1).cast(pl.Int64)
+    )
 
-    result = pl.col(col).get(position)
+    result = pl.col(col).get(valid_position)
 
     if non_negative:
         result = pl.when(result < 0).then(0).otherwise(result)
@@ -269,14 +271,14 @@ def compute_route_features(processed_route_tracking: pl.DataFrame) -> pl.DataFra
         [
             pl.col("relative_x").median().alias("x_median"),
             pl.col("relative_x").std().alias("x_std"),
-            _get_position_from_percent("relative_x", 0.2, True).alias("x_20"),
-            _get_position_from_percent("relative_x", 0.5, True).alias("x_50"),
-            _get_position_from_percent("relative_x", 0.8, True).alias("x_80"),
+            _get_position_value("relative_x", 5, True).alias("x_5"),
+            _get_position_value("relative_x", 20, True).alias("x_20"),
+            _get_position_value("relative_x", 40, True).alias("x_40"),
             pl.col("relative_y").median().alias("y_median"),
             pl.col("relative_y").std().alias("y_std"),
-            _get_position_from_percent("relative_y", 0.2).alias("y_10"),
-            _get_position_from_percent("relative_y", 0.5).alias("y_50"),
-            _get_position_from_percent("relative_y", 0.8).alias("y_80"),
+            _get_position_value("relative_y", 5).alias("y_5"),
+            _get_position_value("relative_y", 20).alias("y_20"),
+            _get_position_value("relative_y", 40).alias("y_40"),
         ]
     )
 
