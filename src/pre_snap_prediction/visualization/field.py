@@ -31,14 +31,11 @@ class Field:
         self.color_endzone = "#6F976D"
         self.color_lines = "white"
 
-        fig = go.Figure()
+        self.fig = go.Figure()
 
-        fig = self._draw_rectangle_on_field(fig, x0=0, y0=0, x1=field_length, y1=field_width, color=self.color_field)
-        fig = self._draw_rectangle_on_field(
-            fig, x0=0, y0=0, x1=self.field_subdivision, y1=field_width, color=self.color_endzone
-        )
-        fig = self._draw_rectangle_on_field(
-            fig,
+        self._draw_rectangle_on_field(x0=0, y0=0, x1=field_length, y1=field_width, color=self.color_field)
+        self._draw_rectangle_on_field(x0=0, y0=0, x1=self.field_subdivision, y1=field_width, color=self.color_endzone)
+        self._draw_rectangle_on_field(
             x0=field_length - self.field_subdivision,
             y0=0,
             x1=field_length,
@@ -46,18 +43,17 @@ class Field:
             color=self.color_endzone,
         )
 
-        fig = self._draw_numbers_on_field(fig, field_width - 5)
-        fig = self._draw_numbers_on_field(fig, 5)
+        self._draw_numbers_on_field(field_width - 5)
+        self._draw_numbers_on_field(5)
 
         for i in range(2, 23):
-            fig = self._draw_line_on_field(
-                fig,
+            self._draw_line_on_field(
                 x=i * self.field_subdivision / 2,
                 color=self.color_lines,
                 width=2 if i % 2 == 0 else 1,
             )
 
-        fig.update_layout(
+        self.fig.update_layout(
             xaxis={"range": [-5, field_length + 5], "visible": False},
             yaxis={"range": [-5, field_width + 5], "visible": False, "scaleanchor": "x", "scaleratio": 1},
             height=600,
@@ -115,13 +111,11 @@ class Field:
             ],
         )
 
-        self.fig = fig
-
-    def _draw_numbers_on_field(self, fig: go.Figure, y: float) -> go.Figure:
+    def _draw_numbers_on_field(self, y: float) -> None:
         numbers_on_field = ["10", "20", "30", "40", "50", "40", "30", "20", "10"]
 
         for i in range(len(numbers_on_field)):
-            fig.add_shape(
+            self.fig.add_shape(
                 x0=(i + 2) * self.field_subdivision,
                 x1=(i + 2) * self.field_subdivision,
                 y0=y,
@@ -137,16 +131,11 @@ class Field:
                 opacity=0,
             )
 
-        return fig
+    def _draw_rectangle_on_field(self, x0: float, y0: float, x1: float, y1: float, color: str) -> None:
+        self.fig.add_shape(type="rect", x0=x0, y0=y0, x1=x1, y1=y1, line_width=0, layer="below", fillcolor=color)
 
-    def _draw_rectangle_on_field(
-        self, fig: go.Figure, x0: float, y0: float, x1: float, y1: float, color: str
-    ) -> go.Figure:
-        fig.add_shape(type="rect", x0=x0, y0=y0, x1=x1, y1=y1, line_width=0, layer="below", fillcolor=color)
-        return fig
-
-    def _draw_line_on_field(self, fig: go.Figure, x: float, color: str, width: int) -> go.Figure:
-        fig.add_shape(
+    def _draw_line_on_field(self, x: float, color: str, width: int) -> None:
+        self.fig.add_shape(
             type="line",
             x0=x,
             y0=0,
@@ -158,7 +147,6 @@ class Field:
                 "width": width,
             },
         )
-        return fig
 
     def _create_step(self, frame_id: str) -> dict:
         step = {
@@ -175,7 +163,7 @@ class Field:
         }
         return step
 
-    def draw_scrimmage_and_first_down(self, absoluteYardlineNumber: int, yardsToGo: int, playDirection: str) -> None:
+    def _draw_scrimmage_and_first_down(self, absoluteYardlineNumber: int, yardsToGo: int, playDirection: str) -> None:
         """Draw scrimmage line and first down marker on the football field.
 
         Parameters
@@ -194,8 +182,8 @@ class Field:
         else:
             raise ValueError
 
-        self.fig = self._draw_line_on_field(self.fig, absoluteYardlineNumber, "#0070C0", 2)
-        self.fig = self._draw_line_on_field(self.fig, yard_line_first_down, "#E9D11F", 2)
+        self._draw_line_on_field(absoluteYardlineNumber, "#0070C0", 2)
+        self._draw_line_on_field(yard_line_first_down, "#E9D11F", 2)
 
     def _draw_reception_zone(
         self,
@@ -265,9 +253,13 @@ class Field:
 
         Parameters
         ----------
-        play_tracking : pd.DataFrame
-            DataFrame containing tracking data for players during the play.
+        play_tracking : pl.DataFrame
+            A Polars DataFrame containing tracking data for players during the play.
         """
+        self._draw_scrimmage_and_first_down(
+            **play_tracking.select(["absoluteYardlineNumber", "yardsToGo", "playDirection"]).rows(named=True)[0]
+        )
+
         routes_traces = []
         if "cluster" in play_tracking.columns:
             route_players = (
