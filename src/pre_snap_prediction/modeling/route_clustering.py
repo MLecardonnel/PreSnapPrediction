@@ -1,6 +1,9 @@
 import polars as pl
+from catboost import CatBoostRegressor
 from sklearn.cluster import AffinityPropagation
 from sklearn.ensemble import IsolationForest
+from sklearn.metrics import root_mean_squared_error
+from sklearn.model_selection import train_test_split
 
 
 def train_outliers_model(data: pl.DataFrame) -> IsolationForest:
@@ -237,3 +240,69 @@ def get_clusters_reception_zones(player_play: pl.DataFrame, clusters_route_track
     )
 
     return clusters_reception_zones
+
+
+def predict_missing_reception_zone(clusters_route: pl.DataFrame, clusters_reception_zone: pl.DataFrame) -> pl.DataFrame:
+    """Predict missing reception zone values for route clusters.
+
+    Parameters
+    ----------
+    clusters_route : pl.DataFrame
+        A Polars DataFrame containing route clusters.
+    clusters_reception_zone : pl.DataFrame
+        A Polars DataFrame containing reception zone data for the clusters.
+
+    Returns
+    -------
+    pl.DataFrame
+        A Polars DataFrame containing the predicted reception zone data for the clusters.
+    """
+    columns_to_predict = ["relative_x_mean", "relative_y_mean", "route_frameId_mean"]
+
+    clusters_data = clusters_route.drop(["week", "gameId", "playId", "nflId"]).join(
+        clusters_reception_zone.select(["cluster"] + columns_to_predict),
+        on=["cluster"],
+        how="left",
+    )
+
+    clusters_learning = clusters_data.filter(pl.col("relative_x_mean").is_not_null())
+
+    clusters_to_predict = clusters_data.filter(pl.col("relative_x_mean").is_null())
+    clusters_to_predict = clusters_to_predict.group_by("cluster").mean()
+
+    for col in columns_to_predict:
+        x_train, x_test, y_train, y_test = train_test_split(
+            clusters_learning.drop(["cluster"] + columns_to_predict),
+            clusters_learning.select([col]),
+            test_size=0.3,
+        )
+
+        model = CatBoostRegressor().fit(
+            x_train.to_numpy(),
+            y_train.to_numpy(),
+            verbose=False,
+        )
+
+        y_train_pred = model.predict(x_train.to_numpy())
+        y_pred = model.predict(x_test.to_numpy())
+
+        print(f"{col} Train RMSE: {root_mean_squared_error(y_train.to_numpy(), y_train_pred)}")
+        print(f"{col} Train RMSE: {root_mean_squared_error(y_test.to_numpy(), y_pred)}")
+
+        missing_prediction = model.predict(clusters_to_predict.drop(["cluster"] + columns_to_predict).to_numpy())
+
+        clusters_to_predict = clusters_to_predict.with_columns(pl.Series(missing_prediction).alias(col))
+
+    clusters_to_predict = clusters_to_predict.with_columns(
+        (pl.col("relative_x_mean") - 3).alias("relative_x_min"),
+        (pl.col("relative_x_mean") + 3).alias("relative_x_max"),
+        (pl.col("relative_y_mean") - 3).alias("relative_y_min"),
+        (pl.col("relative_y_mean") + 3).alias("relative_y_max"),
+        (pl.col("route_frameId_mean") * 0.1).alias("route_time_mean"),
+    )
+
+    clusters_reception_zone = pl.concat(
+        [clusters_reception_zone, clusters_to_predict.select(clusters_reception_zone.columns)]
+    )
+
+    return clusters_reception_zone

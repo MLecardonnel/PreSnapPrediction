@@ -9,6 +9,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 build/
+catboost_info/
 data/*
 !data/.gitkeep
 develop-eggs/

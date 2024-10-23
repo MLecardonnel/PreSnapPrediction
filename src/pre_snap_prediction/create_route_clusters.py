@@ -40,4 +40,5 @@ if __name__ == "__main__":
     clusters_route_tracking = route_clustering.join_clusters_to_data(route_tracking, clusters_route)
 
     clusters_reception_zone = route_clustering.get_clusters_reception_zones(player_play, clusters_route_tracking)
+    clusters_reception_zone = route_clustering.predict_missing_reception_zone(clusters_route, clusters_reception_zone)
     clusters_reception_zone.write_csv(data_path + "clusters_reception_zone.csv", null_value="NA")
