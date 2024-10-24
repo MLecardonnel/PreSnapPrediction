@@ -27,7 +27,7 @@ def read_tracking_csv(weeks: int = 9) -> pl.DataFrame:
     if weeks >= 1 and weeks <= 9:
         tracking = pl.concat(
             [
-                pl.read_csv(data_path + f"tracking_week_{i}.csv", null_values="NA").with_columns(
+                pl.read_csv(data_path + f"tracking_week_{i}.csv", null_values=["NA", ""]).with_columns(
                     pl.lit(i).alias("week")
                 )
                 for i in range(1, weeks + 1)
