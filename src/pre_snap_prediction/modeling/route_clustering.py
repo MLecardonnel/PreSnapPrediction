@@ -306,3 +306,46 @@ def predict_missing_reception_zone(clusters_route: pl.DataFrame, clusters_recept
     )
 
     return clusters_reception_zone
+
+
+def get_complete_plays(player_play: pl.DataFrame, clusters_route: pl.DataFrame) -> pl.DataFrame:
+    """Returns a DataFrame containing the set of plays where all players who ran a route
+    have been assigned to a specific cluster.
+
+    Parameters
+    ----------
+    player_play : pl.DataFrame
+        A Polars DataFrame containing player play information.
+    clusters_route : pl.DataFrame
+        A Polars DataFrame containing route clusters.
+
+    Returns
+    -------
+    pl.DataFrame
+         A DataFrame containing the unique 'gameId' and 'playId' pairs for complete plays.
+    """
+    filtered_player_play = player_play.filter(pl.col("wasRunningRoute") == 1)
+
+    player_play_clusters = filtered_player_play.select(["gameId", "playId", "nflId"]).join(
+        clusters_route.select(["gameId", "playId", "nflId", "cluster"]),
+        on=["gameId", "playId", "nflId"],
+        how="left",
+    )
+
+    plays_missing_clusters = (
+        player_play_clusters.filter(pl.col("cluster").is_null()).select(["gameId", "playId"]).unique()
+    )
+
+    print(f"Incomplete plays: {len(plays_missing_clusters)}")
+
+    complete_plays = (
+        player_play_clusters.select(["gameId", "playId"])
+        .unique()
+        .join(
+            plays_missing_clusters,
+            on=["gameId", "playId"],
+            how="anti",
+        )
+    )
+
+    return complete_plays

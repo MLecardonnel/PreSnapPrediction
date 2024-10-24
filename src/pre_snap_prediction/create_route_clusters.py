@@ -22,16 +22,10 @@ if __name__ == "__main__":
 
     route_features = process_data.compute_route_features(route_tracking)
 
-    outliers_model = route_clustering.train_outliers_model(route_features.filter(pl.col("week") == 1))
-    pickle.dump(outliers_model, open(models_path + "outliers_model.pkl", "wb"))
-
-    outliers_route = route_clustering.predict_outliers(route_features, outliers_model)
-    valid_route_features = route_clustering.remove_outliers(outliers_route)
-
-    clustering_model = route_clustering.train_route_clustering(valid_route_features.filter(pl.col("week") == 1))
+    clustering_model = route_clustering.train_route_clustering(route_features.filter(pl.col("week") == 1))
     pickle.dump(clustering_model, open(models_path + "clustering_model.pkl", "wb"))
 
-    clusters_route = route_clustering.predict_route_cluters(valid_route_features, clustering_model)
+    clusters_route = route_clustering.predict_route_cluters(route_features, clustering_model)
     clusters_route.write_csv(data_path + "clusters_route.csv", null_value="NA")
 
     clusters_route_mode = route_clustering.get_modified_route_mode(player_play, clusters_route)
@@ -42,3 +36,6 @@ if __name__ == "__main__":
     clusters_reception_zone = route_clustering.get_clusters_reception_zones(player_play, clusters_route_tracking)
     clusters_reception_zone = route_clustering.predict_missing_reception_zone(clusters_route, clusters_reception_zone)
     clusters_reception_zone.write_csv(data_path + "clusters_reception_zone.csv", null_value="NA")
+
+    complete_plays = route_clustering.get_complete_plays(player_play, clusters_route)
+    complete_plays.write_csv(data_path + "complete_plays.csv", null_value="NA")
