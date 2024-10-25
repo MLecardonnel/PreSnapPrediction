@@ -322,7 +322,7 @@ def get_complete_plays(player_play: pl.DataFrame, clusters_route: pl.DataFrame) 
     Returns
     -------
     pl.DataFrame
-         A DataFrame containing the unique 'gameId' and 'playId' pairs for complete plays.
+        A DataFrame containing the unique 'gameId' and 'playId' pairs for complete plays.
     """
     filtered_player_play = player_play.filter(pl.col("wasRunningRoute") == 1)
 
@@ -349,3 +349,27 @@ def get_complete_plays(player_play: pl.DataFrame, clusters_route: pl.DataFrame) 
     )
 
     return complete_plays
+
+
+def join_data_to_complete_plays(complete_plays: pl.DataFrame, data: pl.DataFrame) -> pl.DataFrame:
+    """Joins additional data to complete plays based on game and play identifiers.
+
+    Parameters
+    ----------
+    complete_plays : pl.DataFrame
+        A DataFrame containing the unique 'gameId' and 'playId' pairs for complete plays.
+    data : pl.DataFrame
+        A Polars DataFrame to be joined with complete plays.
+
+    Returns
+    -------
+    pl.DataFrame
+        A Polars DataFrame that contains complete plays data.
+    """
+    complete_plays_data = complete_plays.join(
+        data,
+        on=["gameId", "playId"],
+        how="inner",
+    )
+
+    return complete_plays_data
