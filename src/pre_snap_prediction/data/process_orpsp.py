@@ -22,7 +22,9 @@ def create_orpsp_target(complete_plays: pl.DataFrame, plays: pl.DataFrame, playe
     complete_plays_data = route_clustering.join_data_to_complete_plays(complete_plays, plays)
 
     plays_target_data = complete_plays_data.filter(
-        pl.col("passResult").is_not_null(), (~pl.col("qbSpike") | pl.col("qbSpike").is_null())
+        pl.col("passResult").is_not_null(),
+        (~pl.col("qbSpike") | pl.col("qbSpike").is_null()),
+        ((pl.col("timeToSack") > 4) | pl.col("timeToSack").is_null()),
     )
 
     plays_target_data = plays_target_data.with_columns(

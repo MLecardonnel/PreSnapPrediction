@@ -245,6 +245,7 @@ class Field:
                 "width": 3,
             },
             opacity=0.5,
+            hoverinfo="none",
             showlegend=False,
         )
 
