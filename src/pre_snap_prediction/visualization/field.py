@@ -1,9 +1,11 @@
+import copy
 from pathlib import Path
 
+import imageio.v3 as iio
 import plotly.graph_objects as go
 import polars as pl
 
-animations_path = str(Path(__file__).parents[3] / "reports/animations")
+animations_path = (Path(__file__).parents[3] / "reports/animations").as_posix() + "/"
 
 
 class Field:
@@ -350,3 +352,20 @@ class Field:
             self.fig.add_trace(trace)
         self.fig.frames = frames
         self.fig.layout.sliders[0]["steps"] = steps
+
+    def save_as_gif(self, name: str = "animated_play") -> None:
+        """Save the animated play as a GIF file.
+
+        Parameters
+        ----------
+        name : str, optional
+            Name of the saved GIF file, by default "animated_play"
+        """
+        layout = copy.deepcopy(self.fig.layout)
+        frames = []
+        for i, frame in enumerate(self.fig.frames):
+            layout.sliders[0]["active"] = i
+            fig = go.Figure(frame.data, layout=layout)
+            frames.append(iio.imread(fig.to_image(format="png", height=600, width=1350)))
+
+        iio.imwrite(animations_path + f"{name}.gif", frames, loop=0, format="GIF")
