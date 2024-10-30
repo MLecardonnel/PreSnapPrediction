@@ -58,6 +58,8 @@ def inverse_left_directed_plays(data: pl.DataFrame) -> pl.DataFrame:
         [
             pl.when(left_playDirection).then(120.0 - pl.col("x")).otherwise(pl.col("x")).alias("x"),
             pl.when(left_playDirection).then(53.3 - pl.col("y")).otherwise(pl.col("y")).alias("y"),
+            pl.when(left_playDirection).then((pl.col("o") - 180) % 360).alias("o"),
+            pl.when(left_playDirection).then((pl.col("dir") - 180) % 360).alias("dir"),
         ]
     )
 
