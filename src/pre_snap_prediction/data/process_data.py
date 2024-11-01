@@ -2,6 +2,7 @@ from pathlib import Path
 
 import numpy as np
 import polars as pl
+from pre_snap_prediction.utils.constants import FIELD_LENGTH, FIELD_WIDTH
 
 data_path = (Path(__file__).parents[3] / "data").as_posix() + "/"
 
@@ -56,8 +57,8 @@ def inverse_left_directed_plays(data: pl.DataFrame) -> pl.DataFrame:
 
     data = data.with_columns(
         [
-            pl.when(left_playDirection).then(120.0 - pl.col("x")).otherwise(pl.col("x")).alias("x"),
-            pl.when(left_playDirection).then(53.3 - pl.col("y")).otherwise(pl.col("y")).alias("y"),
+            pl.when(left_playDirection).then(FIELD_LENGTH - pl.col("x")).otherwise(pl.col("x")).alias("x"),
+            pl.when(left_playDirection).then(FIELD_WIDTH - pl.col("y")).otherwise(pl.col("y")).alias("y"),
             pl.when(left_playDirection).then((pl.col("o") - 180) % 360).alias("o"),
             pl.when(left_playDirection).then((pl.col("dir") - 180) % 360).alias("dir"),
         ]
@@ -153,7 +154,7 @@ def inverse_right_route(data: pl.DataFrame) -> pl.DataFrame:
     """
     right_route = ~pl.col("route_left")
 
-    data = data.with_columns([pl.when(right_route).then(53.3 - pl.col("y")).otherwise(pl.col("y")).alias("y")])
+    data = data.with_columns([pl.when(right_route).then(FIELD_WIDTH - pl.col("y")).otherwise(pl.col("y")).alias("y")])
 
     return data
 

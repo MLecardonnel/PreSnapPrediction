@@ -4,6 +4,7 @@ from pathlib import Path
 import imageio.v3 as iio
 import plotly.graph_objects as go
 import polars as pl
+from pre_snap_prediction.utils.constants import FIELD_LENGTH, FIELD_WIDTH
 
 animations_path = (Path(__file__).parents[3] / "reports/animations").as_posix() + "/"
 
@@ -11,7 +12,7 @@ animations_path = (Path(__file__).parents[3] / "reports/animations").as_posix() 
 class Field:
     """Class for visualizing a football field with tracking data for a play"""
 
-    def __init__(self, field_width: float = 53.3, field_length: float = 120.0, step_duration: int = 50):
+    def __init__(self, field_width: float = FIELD_WIDTH, field_length: float = FIELD_LENGTH, step_duration: int = 50):
         """Initialize the Field object.
 
         Parameters

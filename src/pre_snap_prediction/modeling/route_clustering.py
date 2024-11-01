@@ -1,5 +1,6 @@
 import polars as pl
 from catboost import CatBoostRegressor
+from pre_snap_prediction.utils.constants import ROUTES_CONVERSION
 from sklearn.cluster import AffinityPropagation
 from sklearn.ensemble import IsolationForest
 from sklearn.metrics import root_mean_squared_error
@@ -158,23 +159,8 @@ def get_modified_route_mode(player_play: pl.DataFrame, clusters_route_tracking: 
         how="inner",
     )
 
-    route_conversion = {
-        "GO": "straight",
-        "HITCH": "shortstraight",
-        "SLANT": "early45angle",
-        "CROSS": "early45angle",
-        "POST": "late45angle",
-        "CORNER": "late45angle",
-        "OUT": "90angle",
-        "IN": "90angle",
-        "FLAT": "flat",
-        "SCREEN": "screen",
-        "ANGLE": "wheelangle",
-        "WHEEL": "wheelangle",
-    }
-
     clusters_route_mode = data.group_by(["cluster"]).agg(
-        pl.col("routeRan").mode().get(0).replace(route_conversion).alias("route_mode"),
+        pl.col("routeRan").mode().get(0).replace(ROUTES_CONVERSION).alias("route_mode"),
     )
 
     return clusters_route_mode
