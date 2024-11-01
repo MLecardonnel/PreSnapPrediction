@@ -132,11 +132,13 @@ def get_clusters_features(
     return clusters_features
 
 
-def get_tracking_features(tracking: pl.DataFrame) -> pl.DataFrame:
+def get_tracking_features(complete_plays: pl.DataFrame, tracking: pl.DataFrame) -> pl.DataFrame:
     """Extracts and returns key tracking features for each player-frame.
 
     Parameters
     ----------
+    complete_plays : pl.DataFrame
+        A DataFrame containing the unique 'gameId' and 'playId' pairs for complete plays.
     tracking : pl.DataFrame
         A Polars DataFrame containing player tracking data.
 
@@ -145,10 +147,11 @@ def get_tracking_features(tracking: pl.DataFrame) -> pl.DataFrame:
     pl.DataFrame
         A Polars DataFrame containing tracking features for each player-frame.
     """
-    tracking = process_data.inverse_left_directed_plays(tracking)
-    tracking = process_data.get_route_direction(tracking)
+    complete_tracking = route_clustering.join_data_to_complete_plays(complete_plays, tracking)
+    complete_tracking = process_data.inverse_left_directed_plays(complete_tracking)
+    complete_tracking = process_data.get_route_direction(complete_tracking)
 
-    tracking_features = tracking.select(
+    tracking_features = complete_tracking.select(
         ["gameId", "playId", "nflId", "frameType", "frameId", "playDirection", "x", "y", "o", "event", "route_left"]
     )
 
