@@ -94,6 +94,7 @@ def orpsp_train_test_split(
         learning_data.drop("orpsp_target"),
         learning_data.select("orpsp_target"),
         test_size=test_size,
+        random_state=0,
     )
 
     return x_train, x_test, y_train, y_test
