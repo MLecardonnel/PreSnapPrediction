@@ -19,7 +19,6 @@ ROUTES_CONVERSION = {
 
 
 FEATURES = [
-    "gameId",
     "down",
     "yardsToGo",
     "offenseFormation",
