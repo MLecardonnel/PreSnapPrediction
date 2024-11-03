@@ -55,7 +55,7 @@ def create_orpsp_target(complete_plays: pl.DataFrame, plays: pl.DataFrame, playe
 
     players_target_data = players_target_data.select(["gameId", "playId", "nflId", "orpsp_target"])
 
-    print(players_target_data["orpsp_target"].value_counts())
+    print(players_target_data["orpsp_target"].value_counts().sort("orpsp_target"))
 
     return players_target_data
 

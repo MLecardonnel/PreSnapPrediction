@@ -26,16 +26,16 @@ if __name__ == "__main__":
     pickle.dump(clustering_model, open(models_path + "clustering_model.pkl", "wb"))
 
     clusters_route = route_clustering.predict_route_cluters(route_features, clustering_model)
-    clusters_route.write_csv(data_path + "clusters_route.csv", null_value=["NA", ""])
+    clusters_route.write_csv(data_path + "clusters_route.csv", null_value="NA")
 
     clusters_route_mode = route_clustering.get_modified_route_mode(player_play, clusters_route)
-    clusters_route_mode.write_csv(data_path + "clusters_route_mode.csv", null_value=["NA", ""])
+    clusters_route_mode.write_csv(data_path + "clusters_route_mode.csv", null_value="NA")
 
     clusters_route_tracking = route_clustering.join_clusters_to_data(route_tracking, clusters_route)
 
     clusters_reception_zone = route_clustering.get_clusters_reception_zones(player_play, clusters_route_tracking)
     clusters_reception_zone = route_clustering.predict_missing_reception_zone(clusters_route, clusters_reception_zone)
-    clusters_reception_zone.write_csv(data_path + "clusters_reception_zone.csv", null_value=["NA", ""])
+    clusters_reception_zone.write_csv(data_path + "clusters_reception_zone.csv", null_value="NA")
 
     complete_plays = route_clustering.get_complete_plays(player_play, clusters_route)
-    complete_plays.write_csv(data_path + "complete_plays.csv", null_value=["NA", ""])
+    complete_plays.write_csv(data_path + "complete_plays.csv", null_value="NA")
