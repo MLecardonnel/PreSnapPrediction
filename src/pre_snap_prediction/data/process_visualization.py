@@ -71,14 +71,14 @@ def add_orpsp_to_visualization(visualization_tracking: pl.DataFrame, orpsp_predi
     Parameters
     ----------
     visualization_tracking : pl.DataFrame
-        _description_
+        A Polars DataFrame containing the visualization tracking data.
     orpsp_predictions : pl.DataFrame
-        _description_
+        A Polars DataFrame containing the predicted ORPSP.
 
     Returns
     -------
     pl.DataFrame
-        _description_
+        A Polars DataFrame containing the enhanced visualization tracking data.
     """
     visualization_tracking = visualization_tracking.join(
         orpsp_predictions,
