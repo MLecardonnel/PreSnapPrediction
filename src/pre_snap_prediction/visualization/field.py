@@ -2,8 +2,11 @@ import copy
 from pathlib import Path
 
 import imageio.v3 as iio
+import numpy as np
 import plotly.graph_objects as go
 import polars as pl
+from matplotlib.cm import Reds
+from matplotlib.colors import to_hex
 from pre_snap_prediction.utils.constants import FIELD_LENGTH, FIELD_WIDTH
 
 animations_path = (Path(__file__).parents[3] / "reports/animations").as_posix() + "/"
@@ -244,12 +247,35 @@ class Field:
             y=route_tracking["y"].to_numpy(),
             mode="lines",
             line={
-                "color": "IndianRed",
+                "color": "Teal",
                 "width": 3,
             },
             opacity=0.5,
             hoverinfo="none",
             showlegend=False,
+        )
+
+    def _get_color(self, value: float) -> str:
+        return to_hex(Reds(value))
+
+    def _create_orpsp_card(self, nb_cards: int, card: int, displayName: str, orpsp: float):
+        card_prop = self.field_width / nb_cards
+        card_center = card_prop * card - card_prop / 2
+
+        self.fig.add_shape(
+            type="rect",
+            layer="below",
+            x0=-30,
+            x1=-5,
+            y0=card_center - (card_prop / 2 - 1),
+            y1=card_center + (card_prop / 2 - 1),
+            opacity=0.7,
+            fillcolor=self._get_color(orpsp),
+            line_color="Black",
+            label={
+                "text": f"{displayName}<br><b>ORPSP:</b> {round(orpsp, 2)}",
+                "font": {"color": "Black"},
+            },
         )
 
     def create_animation(self, play_tracking: pl.DataFrame) -> None:
@@ -296,6 +322,21 @@ class Field:
                 route_tracking = routes_tracking.filter(pl.col("nflId") == player)
                 routes_traces.append(self._create_scatter_route(route_tracking))
 
+        if "orpsp" in play_tracking.columns:
+            receiver_first_frame = (
+                play_tracking.filter(pl.col("frameType") == "BEFORE_SNAP", pl.col("orpsp").is_not_null())
+                .group_by(["gameId", "playId", "nflId"])
+                .last()
+            )
+            receiver_first_frame = receiver_first_frame.sort("y")
+            for i in range(len(receiver_first_frame)):
+                self._create_orpsp_card(
+                    len(receiver_first_frame),
+                    i + 1,
+                    receiver_first_frame["displayName"][i],
+                    receiver_first_frame["orpsp"][i],
+                )
+
         frames = []
         steps = []
         for frame_id in play_tracking["frameId"].unique():
@@ -320,14 +361,56 @@ class Field:
                 ),
             )
 
+            if "orpsp" in offense_tracking.columns:
+                offense_tracking = offense_tracking.with_columns(
+                    pl.col("orpsp").fill_null(0).map_elements(self._get_color, return_dtype=str).alias("hex_color")
+                )
+
+                marker = {
+                    "size": 10,
+                    "color": offense_tracking["hex_color"].to_numpy(),
+                    "cmin": 0,
+                    "cmax": 1,
+                    "colorscale": "Reds",
+                    "colorbar": dict(title="offense", thickness=10, x=1.03, y=0.4, len=0.85),
+                }
+                showlegend = False
+                customdata = np.stack(
+                    (
+                        offense_tracking["nflId"].to_numpy(),
+                        offense_tracking["displayName"].to_numpy(),
+                        offense_tracking["club"].to_numpy(),
+                        offense_tracking["orpsp"].fill_null(0).round(2).to_numpy(),
+                    ),
+                    axis=-1,
+                )
+                hovertemplate = "<br><b>ORPSP:</b> %{customdata[3]}"
+
+            else:
+                marker = {"size": 10, "color": "white"}
+                showlegend = True
+                customdata = np.stack(
+                    (
+                        offense_tracking["nflId"].to_numpy(),
+                        offense_tracking["displayName"].to_numpy(),
+                        offense_tracking["club"].to_numpy(),
+                    ),
+                    axis=-1,
+                )
+                hovertemplate = ""
+
             data.append(
                 go.Scatter(
                     x=offense_tracking["x"].to_numpy(),
                     y=offense_tracking["y"].to_numpy(),
                     mode="markers",
-                    marker={"size": 10, "color": "white"},
+                    marker=marker,
                     name="offense",
-                    hoverinfo="none",
+                    showlegend=showlegend,
+                    customdata=customdata,
+                    hovertemplate="<b>nflId:</b> %{customdata[0]}<br>"
+                    "<b>Player:</b> %{customdata[1]}<br>"
+                    "<b>Team:</b> %{customdata[2]}<br>" + hovertemplate,
                 ),
             )
 

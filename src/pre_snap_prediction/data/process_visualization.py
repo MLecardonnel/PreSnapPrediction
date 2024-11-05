@@ -65,11 +65,36 @@ def add_clusters_to_visualization(
     return visualization_tracking
 
 
+def add_orpsp_to_visualization(visualization_tracking: pl.DataFrame, orpsp_predictions: pl.DataFrame) -> pl.DataFrame:
+    """Enhances the visualization tracking data by adding ORPSP predictions.
+
+    Parameters
+    ----------
+    visualization_tracking : pl.DataFrame
+        _description_
+    orpsp_predictions : pl.DataFrame
+        _description_
+
+    Returns
+    -------
+    pl.DataFrame
+        _description_
+    """
+    visualization_tracking = visualization_tracking.join(
+        orpsp_predictions,
+        on=["gameId", "playId", "nflId"],
+        how="left",
+    )
+
+    return visualization_tracking
+
+
 def compute_visualization_tracking(
     tracking: pl.DataFrame,
     plays: pl.DataFrame,
     clusters_route: pl.DataFrame | None = None,
     clusters_reception_zone: pl.DataFrame | None = None,
+    orpsp_predictions: pl.DataFrame | None = None,
 ) -> pl.DataFrame:
     """Prepares tracking data for visualization by incorporating play details and optional clustering data.
 
@@ -108,5 +133,8 @@ def compute_visualization_tracking(
         visualization_tracking = add_clusters_to_visualization(
             visualization_tracking, clusters_route, clusters_reception_zone
         )
+
+    if orpsp_predictions is not None:
+        visualization_tracking = add_orpsp_to_visualization(visualization_tracking, orpsp_predictions)
 
     return visualization_tracking
