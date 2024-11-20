@@ -33,7 +33,8 @@ if __name__ == "__main__":
     tracking_features = process_orpsp.get_tracking_features(complete_plays, tracking)
     start_features = process_orpsp.get_start_features(tracking_features)
 
-    orpsp_features = process_orpsp.compute_orpsp_features(plays_features, clusters_features, start_features, players)
+    orpsp_features = process_orpsp.preprocess_orpsp_features(plays_features, clusters_features, start_features, players)
+    orpsp_features = process_orpsp.compute_orpsp_features(orpsp_features)
     orpsp_features.write_csv(data_path + "orpsp_features.csv", null_value="NA")
 
     features = orpsp_classification.select_orpsp_features(orpsp_features)

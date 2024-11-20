@@ -15,7 +15,13 @@ animations_path = (Path(__file__).parents[3] / "reports/animations").as_posix() 
 class Field:
     """Class for visualizing a football field with tracking data for a play"""
 
-    def __init__(self, field_width: float = FIELD_WIDTH, field_length: float = FIELD_LENGTH, step_duration: int = 50):
+    def __init__(
+        self,
+        field_width: float = FIELD_WIDTH,
+        field_length: float = FIELD_LENGTH,
+        step_duration: int = 50,
+        is_animated: bool = True,
+    ):
         """Initialize the Field object.
 
         Parameters
@@ -26,12 +32,16 @@ class Field:
             Length of the football field, by default 120.0
         step_duration : int, optional
             Duration for animation steps, by default 50
+        is_animated : bool, optional
+            Is the figure animated, by default True
         """
         self.field_width = field_width
         self.field_length = field_length
         self.field_subdivision = field_length / 12
 
         self.step_duration = step_duration
+
+        self.is_animated = is_animated
 
         self.color_field = "#96B78C"
         self.color_endzone = "#6F976D"
@@ -63,58 +73,71 @@ class Field:
             xaxis={"range": [-5, field_length + 5], "visible": False},
             yaxis={"range": [-5, field_width + 5], "visible": False, "scaleanchor": "x", "scaleratio": 1},
             height=600,
-            updatemenus=[
-                {
-                    "buttons": [
-                        {
-                            "args": [
-                                None,
-                                {
-                                    "frame": {"duration": self.step_duration, "redraw": False},
-                                    "fromcurrent": True,
-                                    "transition": {"duration": 0},
-                                },
-                            ],
-                            "label": "⏵",
-                            "method": "animate",
+            updatemenus=(
+                [
+                    {
+                        "buttons": [
+                            {
+                                "args": [
+                                    None,
+                                    {
+                                        "frame": {"duration": self.step_duration, "redraw": False},
+                                        "fromcurrent": True,
+                                        "transition": {"duration": 0},
+                                    },
+                                ],
+                                "label": "⏵",
+                                "method": "animate",
+                            },
+                            {
+                                "args": [
+                                    [None],
+                                    {
+                                        "frame": {"duration": 0, "redraw": False},
+                                        "mode": "immediate",
+                                        "transition": {"duration": 0},
+                                    },
+                                ],
+                                "label": "⏸",
+                                "method": "animate",
+                            },
+                        ],
+                        "direction": "left",
+                        "pad": {"r": 10, "t": 87},
+                        "showactive": False,
+                        "type": "buttons",
+                        "x": 0.1,
+                        "xanchor": "right",
+                        "y": 0,
+                        "yanchor": "top",
+                    }
+                ]
+                if self.is_animated
+                else None
+            ),
+            sliders=(
+                [
+                    {
+                        "active": 0,
+                        "yanchor": "top",
+                        "xanchor": "left",
+                        "currentvalue": {
+                            "font": {"size": 20},
+                            "prefix": "frameId: ",
+                            "visible": True,
+                            "xanchor": "right",
                         },
-                        {
-                            "args": [
-                                [None],
-                                {
-                                    "frame": {"duration": 0, "redraw": False},
-                                    "mode": "immediate",
-                                    "transition": {"duration": 0},
-                                },
-                            ],
-                            "label": "⏸",
-                            "method": "animate",
-                        },
-                    ],
-                    "direction": "left",
-                    "pad": {"r": 10, "t": 87},
-                    "showactive": False,
-                    "type": "buttons",
-                    "x": 0.1,
-                    "xanchor": "right",
-                    "y": 0,
-                    "yanchor": "top",
-                }
-            ],
-            sliders=[
-                {
-                    "active": 0,
-                    "yanchor": "top",
-                    "xanchor": "left",
-                    "currentvalue": {"font": {"size": 20}, "prefix": "frameId: ", "visible": True, "xanchor": "right"},
-                    "transition": {"duration": self.step_duration, "easing": "cubic-in-out"},
-                    "pad": {"b": 10, "t": 50},
-                    "len": 0.9,
-                    "x": 0.1,
-                    "y": 0,
-                    "steps": [],
-                }
-            ],
+                        "transition": {"duration": self.step_duration, "easing": "cubic-in-out"},
+                        "pad": {"b": 10, "t": 50},
+                        "len": 0.9,
+                        "x": 0.1,
+                        "y": 0,
+                        "steps": [],
+                    }
+                ]
+                if self.is_animated
+                else None
+            ),
         )
 
     def _draw_numbers_on_field(self, y: float) -> None:
@@ -435,7 +458,8 @@ class Field:
         for trace in frames[0]["data"]:
             self.fig.add_trace(trace)
         self.fig.frames = frames
-        self.fig.layout.sliders[0]["steps"] = steps
+        if self.is_animated:
+            self.fig.layout.sliders[0]["steps"] = steps
 
     def save_as_gif(self, name: str = "animated_play") -> None:
         """Save the animated play as a GIF file.

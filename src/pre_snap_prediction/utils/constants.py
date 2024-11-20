@@ -60,3 +60,9 @@ FEATURES_TO_ENCODE = [
     "route_mode",
     "position",
 ]
+
+
+ROUTE_TIME_FEATURES = ["route_mode", "dis_recep_zone", "dir_recep_zone"]
+
+
+ROUTE_TIME_FEATURES_TO_ENCODE = ["route_mode"]

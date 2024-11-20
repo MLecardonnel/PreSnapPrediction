@@ -267,10 +267,10 @@ def _get_absolute_reception_zone(data: pl.DataFrame) -> pl.DataFrame:
     return data
 
 
-def compute_orpsp_features(
+def preprocess_orpsp_features(
     plays_features: pl.DataFrame, clusters_features: pl.DataFrame, start_features: pl.DataFrame, players: pl.DataFrame
 ) -> pl.DataFrame:
-    """Computes Open Receiver Pre Snap Probability (ORPSP) features for each play.
+    """Pre-process Open Receiver Pre Snap Probability (ORPSP) features for each play.
 
     Parameters
     ----------
@@ -286,7 +286,7 @@ def compute_orpsp_features(
     Returns
     -------
     pl.DataFrame
-        Polars DataFrame of ORPSP features.
+        Polars DataFrame of pre-processed ORPSP features.
     """
     features = clusters_features.join(
         plays_features,
@@ -319,9 +319,29 @@ def compute_orpsp_features(
 
     features = _get_absolute_reception_zone(features)
 
+    return features
+
+
+def compute_orpsp_features(features: pl.DataFrame) -> pl.DataFrame:
+    """Computes Open Receiver Pre Snap Probability (ORPSP) features for each play.
+
+    Parameters
+    ----------
+    features : pl.DataFrame
+        Polars DataFrame of pre-processed ORPSP features.
+
+    Returns
+    -------
+    pl.DataFrame
+        Polars DataFrame of ORPSP features.
+    """
     features = features.with_columns(
-        _compute_euclidian_distance(0, 0, pl.col("relative_x_mean"), pl.col("relative_y_mean")).alias("dis_recep_zone"),
-        _compute_direction_angle(0, 0, pl.col("relative_x_mean"), pl.col("relative_y_mean")).alias("dir_recep_zone"),
+        _compute_euclidian_distance(pl.col("x"), pl.col("y"), pl.col("x_recep_zone"), pl.col("y_recep_zone")).alias(
+            "dis_recep_zone"
+        ),
+        _compute_direction_angle(pl.col("x"), pl.col("y"), pl.col("x_recep_zone"), pl.col("y_recep_zone")).alias(
+            "dir_recep_zone"
+        ),
         _convert_dis_to_nearest_sideline(_compute_euclidian_distance(0, 0, 0, pl.col("y_recep_zone"))).alias(
             "recep_zone_dis_out_of_bounds"
         ),

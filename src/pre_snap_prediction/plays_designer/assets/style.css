@@ -1,0 +1,19 @@
+:root {
+    --big-data-blue: #18384B;
+    --big-data-red: #CE1255;
+    --border: #cfcfcf;
+}
+
+
+.title {
+    font-weight: 700;
+    color: var(--big-data-blue);
+}
+
+.highlight {
+    color: var(--big-data-red);
+}
+
+.row_border {
+    border-bottom: 1px solid var(--border) !important;
+}
