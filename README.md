@@ -15,12 +15,12 @@ In the tracking data, it is straightforward to identify the reception zones of r
 Routes from the same categorie can go in different directions depending on whether the receiver is on the left or right side of the football. For example, an out route on the left side goes in the opposite direction of an out route on the right side but in the same direction as an in route. While the two out routes may be identical, they would not be grouped together without preprocessing. To address this, it is simpler to consider out and in routes as 90-degrees angle routes and standardize them to go in the same direction. Consequently, all routes are standardized.
 
 <p align="center">
-    <img src="reports/figures/route_transformation.png">
+    <img src="reports/figures/route_standardization.png">
     Figure 1. Route standardization
 </p>
 
 <p align="center">
-    <img src="reports/figures/route_clusters.png">
+    <img src="reports/figures/route_clustering.png">
     Figure 2. Route clustering and identified reception zones
 </p>
 
