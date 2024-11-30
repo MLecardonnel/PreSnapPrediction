@@ -26,7 +26,7 @@ With all routes standardized to the same direction, clustering can be applied us
     Figure 2. Route clustering and identified reception zones
 </p>
 
-The average route time can be calculated for each cluster, providing more valuable information. For each route run, a reception zone and route time can be determined by identifying its corresponding cluster. Below is an example play showcasing the computed reception zones and route times.
+The average route time are calculated for each cluster, providing more valuable information. For each route run, a reception zone and its route time are determined by identifying its corresponding cluster. Below is an example play showcasing the computed reception zones and route times.
 
 <p align="center">
     <img src="reports/animations/animated_play_routes.gif">
