@@ -19,9 +19,18 @@ Routes from the same categorie can go in different directions depending on wheth
     Figure 1. Route standardization
 </p>
 
+With all routes standardized to the same direction, clustering can be applied using key features such as the coefficients of a quadratic approximation, positions at specific frames and their standard deviation over time. Affinity Propagation is a robust choice that delivers accurate clustering results. The algorithm autonomously identifies cluster centers and assigns data points to clusters by evaluating both the similarity between data points and their suitability as exemplars. Reception zones can be assigned to the resulting clusters based on the targeted routes within each cluster.
+
 <p align="center">
     <img src="reports/figures/route_clustering.png">
     Figure 2. Route clustering and identified reception zones
+</p>
+
+The average route time can be calculated for each cluster, providing more valuable information. For each route run, a reception zone and route time can be determined by identifying its corresponding cluster. Below is an example play showcasing the computed reception zones and route times.
+
+<p align="center">
+    <img src="reports/animations/animated_play_routes.gif">
+    Figure 3. Example play with reception zones
 </p>
 
 
