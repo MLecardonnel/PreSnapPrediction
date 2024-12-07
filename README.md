@@ -37,6 +37,34 @@ For each route run, a reception zone and its route time are determined by identi
 
 
 ### Introducing the ORPSP Metric: Open Receiver Pre Snap Probability
+Now that quarterbacks have information on where and when their receivers can be targeted for every route, it becomes relevant to analyze the probability of receivers being open in their respective reception zones. This paper focuses on an open receiver pre-snap probability independent of the defense, based solely on data that could be found in a pass playbook and additional general information about the play.
+
+To model this probability, all receiver routes that were targeted or where the quarterback was sacked or scrambled are used. Receiver routes resulting in a completed pass are labeled as successful, while all the others are labeled as unsuccessful. For each receiver route, the computed features include its characteristics, such as the route type, route time, positioning of the receiver at lineset and of its reception zone. Additional play features include the offensive formation, receiver alignment, route and reception zone combinations... The classification model used is a gradient boosting algorithm, where the predicted probability of success for each route run represents the new metric, ORPSP.
+
+<p align="center">
+    <img src="reports/figures/orpsp_full_performances.png">
+    Figure 4. ORPSP classification model performances
+</p>
+
+The model performances are not great but they are still significant enough to provide valuable insights. The study of Shapley values reveals the key characteristics that contribute to the success of a route. The route time feature emerges as the most relevant one. **The quicker the route, the more likely the receiver will be open in its reception zone**. Thus the model detects that quick plays where the quarterback throws the football to receivers with short routes have a higher chance of success. An other feature worth mentioning is the distance between the receiver at lineset and the back of the endzone. **The closer to scoring a touchdown, the less likely the receiver will be open in its reception zone**. Other model interpretations include examples such as:
+- The higher the down number, the less likely the receiver will be open
+- The more reception zones before the line of scrimmage on the play, the less likely the receiver will be open
+- The more straight routes on the play (such as a Hail Mary), the less likely the receiver will be open
+- The closer the reception zone is out of bounds, the less likely the receiver will be open
+
+The ORPSP metric is computed to all receiver routes from the previous example.
+
+<p align="center">
+    <img src="reports/animations/animated_play_orpsp.gif">
+    Figure 5. Example play with the ORPSP metric
+</p>
+
+In the above example, the quarterback targets the receiver with the highest ORPSP score. The receiver ends up catching the ball for a gain of more than 10 yards. In the example bellow, the quarterback focuses on his right side while the receiver with the highest ORPSP score in on his left. This receiver is indeed open as the quarterback ends up beeing sacked.
+
+<p align="center">
+    <img src="reports/animations/animated_play_orpsp_sack.gif">
+    Figure 6. Second example play with the ORPSP metric
+</p>
 
 ### Metric Analysis and Use Cases
 
