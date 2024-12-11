@@ -19,11 +19,16 @@ all = [
     "pre-commit",
     "mkdocs-material",
     "mkdocstrings[python]",
+    "pandas==2.2.3",
+    "pyarrow==17.0.0",
+    "shap==0.46.0",
+    "shapash==2.7.2",
 ]
 test = ["pytest"]
 doc  = ["mkdocs-material", "mkdocstrings[python]"]
 mypy = ["mypy"]
 ruff = ["ruff"]
+explainer = ["pandas==2.2.3", "pyarrow==17.0.0", "shap==0.46.0", "shapash==2.7.2"]
 
 [tool.setuptools]
 package-dir = { "" = "src" } #
