@@ -42,7 +42,7 @@ Now that quarterbacks have information on where and when their receivers can be 
 To model this probability, all receiver routes that were targeted or where the quarterback was sacked or scrambled are used. Receiver routes resulting in a completed pass are labeled as successful, while all the others are labeled as unsuccessful. For each receiver route, the computed features include its characteristics, such as the route type, route time, positioning of the receiver at lineset and of its reception zone. Additional play features include the offensive formation, receiver alignment, route and reception zone combinations... The classification model used is a gradient boosting algorithm, where the predicted probability of success for each route run represents the new metric, ORPSP.
 
 <p align="center">
-    <img src="reports/figures/orpsp_full_performances.png">
+    <img src="reports/figures/orpsp_performances.png">
     Figure 4. ORPSP classification model performances
 </p>
 
