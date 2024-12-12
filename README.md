@@ -67,5 +67,31 @@ In the above example, the quarterback targets the receiver with the highest ORPS
 </p>
 
 ### Metric Analysis and Use Cases
+With the ORPSP metric computed for all routes run by the receivers, it is possible to provide context when evaluating the receivers' performance over the weeks. The receivers' catch rates are compared with their calculated average ORPSP for every targeted route. This puts receptions into perspective based on the difficulty level of the receivers getting open.
+
+<p align="center">
+    <img src="reports/figures/receiver_performances.png">
+    Figure 7. Receivers performance: catch rate VS targeted average ORPSP
+</p>
+
+There is a strong correlation between catch rate and targeted average ORPSP, with a Pearson coefficient of 0.57. This confirms that the lower the receiver's average probability of getting open, the lower their catch rate will be.
+
+Comparing the two wide receivers, JuJu Smith-Schuster and Amari Cooper, based solely on their catch rate would favor JuJu Smith-Schuster. His catch rate is 0.73, significantly higher than Amari Cooper's 0.57. However, taking the targeted average ORPSP into account reveals an explanation for this difference. Both receivers are performing as expected based on the likelihood of getting open. Amari Cooper runs routes that are less likely to allow him to get open, which leads to a lower catch rate. He ended up ranked 15th in the PFF 2022 wide receiver regular season rankings, which noted: "Cooper’s performance flew under the radar in 2022."
+
+One player performing above expectations is Austin Ekeler. His catch rate is significantly higher than the average receiver with a same targeted average ORPSP. He went on to record the most catches by a running back in a single season in Chargers history.
+
+
+<p align="center">
+    <img src="reports/figures/quarterback_performances.png">
+    Figure 8. Quarterbacks performance: Completion rate VS Targeted receiver average ORPSP
+</p>
+
+
+
+<p align="center">
+    <img src="reports/animations/nfl_plays_designer.gif">
+    Figure 9. NFL Plays Designer dashboard
+</p>
+
 
 ### Conclusion
