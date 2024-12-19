@@ -46,7 +46,7 @@ To model this probability, all receiver routes that were targeted or where the q
     Figure 4. ORPSP classification model performances
 </p>
 
-The model performances are not great but they are still significant enough to provide valuable insights. The study of Shapley values reveals the key characteristics that contribute to the success of a route. The route time feature emerges as the most relevant one. **The quicker the route, the more likely the receiver will be open in its reception zone**. Thus the model detects that quick plays where the quarterback throws the football to receivers with short routes have a higher chance of success. An other feature worth mentioning is the distance between the receiver at lineset and the back of the endzone. **The closer to scoring a touchdown, the less likely the receiver will be open in its reception zone**. Other model interpretations include examples such as:
+The model performances are not great but they are still significant enough to provide valuable insights. The study of Shapley values reveals the key characteristics that contribute to the success of a route. The route time feature emerges as the most relevant one. **The quicker the route, the more likely the receiver will be open in its reception zone**. Thus, the model identifies that quick plays where the quarterback throws the football early to receivers running quick routes have a higher chance of success. An other feature worth mentioning is the distance between the receiver at lineset and the back of the endzone. **The closer to scoring a touchdown, the less likely the receiver will be open in its reception zone**. Other model interpretations include examples such as:
 - The higher the down number, the less likely the receiver will be open
 - The more reception zones before the line of scrimmage on the play, the less likely the receiver will be open
 - The more straight routes on the play (such as a Hail Mary), the less likely the receiver will be open
@@ -80,13 +80,18 @@ Comparing the two wide receivers, JuJu Smith-Schuster and Amari Cooper, based so
 
 One player performing above expectations is Austin Ekeler. His catch rate is significantly higher than the average receiver with a same targeted average ORPSP. He went on to record the most catches by a running back in a single season in Chargers history.
 
+It is also possible to contextualize quarterbacks' performances by comparing their completion rate to the average ORPSP of the receivers they target. The targeted receiver average ORPSP value indicates whether a quarterback tends to take more or fewer risks.
 
 <p align="center">
     <img src="reports/figures/quarterback_performances.png">
     Figure 8. Quarterbacks performance: Completion rate VS Targeted receiver average ORPSP
 </p>
 
+The correlation between completion rate and targeted receiver average ORPSP is significant, with a Pearson coefficient of 0.44. A quarterback that takes fewer risks is more likely to have a high completion rate.
 
+Geno Smith leads all quarterbacks in completion rate at 0.74. Based on his targeted receiver average ORPSP, he is performing well above expectations while taking risks comparable to the average quarterback. By the end of the season, he set several Seahawks franchise records, including the highest single-season completion percentage and the most pass completions in a single season. Geno Smith was named Comeback Player of the Year by the Associated Press and the Pro Football Writers of America (PFWA). In addition, the PFWA named him as their Most Improved Player.
+
+Matt Ryan also records an impressive completion rate of 0.72, ranking third among quarterbacks with more than 50 throws. However, he is the quarterback taking the fewest risks and has the highest targeted receiver average ORPSP. His completion rate aligns with what is expected from him based on the risks he takes. Matt Ryan was benched during the season, which would turn out to be his last before retiring.
 
 <p align="center">
     <img src="reports/animations/nfl_plays_designer.gif">
