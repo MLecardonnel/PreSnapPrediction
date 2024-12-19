@@ -66,7 +66,7 @@ In the above example, the quarterback targets the receiver with the highest ORPS
     Figure 6. Second example play with the ORPSP metric
 </p>
 
-### Metric Analysis and Use Cases
+### ORPSP Metric Analysis
 With the ORPSP metric computed for all routes run by the receivers, it is possible to provide context when evaluating the receivers' performance over the weeks. The receivers' catch rates are compared with their calculated average ORPSP for every targeted route. This puts receptions into perspective based on the difficulty level of the receivers getting open.
 
 <p align="center">
@@ -84,7 +84,7 @@ It is also possible to contextualize quarterbacks' performances by comparing the
 
 <p align="center">
     <img src="reports/figures/quarterback_performances.png">
-    Figure 8. Quarterbacks performance: Completion rate VS Targeted receiver average ORPSP
+    Figure 8. Quarterbacks performance: Completion rate VS targeted receiver average ORPSP
 </p>
 
 The correlation between completion rate and targeted receiver average ORPSP is significant, with a Pearson coefficient of 0.44. A quarterback that takes fewer risks is more likely to have a high completion rate.
@@ -92,6 +92,9 @@ The correlation between completion rate and targeted receiver average ORPSP is s
 Geno Smith leads all quarterbacks in completion rate at 0.74. Based on his targeted receiver average ORPSP, he is performing well above expectations while taking risks comparable to the average quarterback. By the end of the season, he set several Seahawks franchise records, including the highest single-season completion percentage and the most pass completions in a single season. Geno Smith was named Comeback Player of the Year by the Associated Press and the Pro Football Writers of America (PFWA). In addition, the PFWA named him as their Most Improved Player.
 
 Matt Ryan also records an impressive completion rate of 0.72, ranking third among quarterbacks with more than 50 throws. However, he is the quarterback taking the fewest risks and has the highest targeted receiver average ORPSP. His completion rate aligns with what is expected from him based on the risks he takes. Matt Ryan was benched during the season, which would turn out to be his last before retiring.
+
+
+### Building a Pass Playbook
 
 <p align="center">
     <img src="reports/animations/nfl_plays_designer.gif">
