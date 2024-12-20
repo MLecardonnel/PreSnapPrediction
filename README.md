@@ -107,3 +107,10 @@ After selecting a formation and a receiver alignment, coaches can adjust the pos
 Coaches have the ability to fully create a pass playbook with critical information to assist in decision-making. Together with the quarterbacks, coaches can study the critical zones that need to be prioritized at different moments of a play.
 
 ### Conclusion
+The integration of reception zones and the ORPSP metric provides invaluable insights into both decision-making and performance. By identifying where and when a receiver is likely to be open, coaches and quarterbacks can make more informed decisions during play design and execution.
+
+The analysis of the ORPSP model allows for a deeper understanding of how route time, red zone, and route combinations influence a pass's success.
+
+The ability to contextualize performance data with route difficulty and risk-taking helps identify overperforming players, such as receiver Austin Ekeler and quarterback Geno Smith.
+
+Ultimately, this methodology empowers coaches to design more effective playbooks, prioritize high ORPSP, and tailor strategies that enhance the likelihood of success on the field.
