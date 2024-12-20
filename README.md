@@ -94,12 +94,16 @@ Geno Smith leads all quarterbacks in completion rate at 0.74. Based on his targe
 Matt Ryan also records an impressive completion rate of 0.72, ranking third among quarterbacks with more than 50 throws. However, he is the quarterback taking the fewest risks and has the highest targeted receiver average ORPSP. His completion rate aligns with what is expected from him based on the risks he takes. Matt Ryan was benched during the season, which would turn out to be his last before retiring.
 
 
-### Building a Pass Playbook
+### Designing a Pass Playbook
+For each play design, it is now possible to determine how likely each receiver is to be open, along with the location and timing. It then becomes feasible to create a pass playbook with this key information, guiding the quarterback's decisions during the game. Below is a prototype of a dashboard designed to help coaches in creating pass plays.
 
 <p align="center">
     <img src="reports/animations/nfl_plays_designer.gif">
     Figure 9. NFL Plays Designer dashboard
 </p>
 
+After selecting a formation and a receiver alignment, coaches can adjust the positions of the receivers and their reception zones while choosing their route types. They can also edit the context of the play by modifying the absolute yard line, the yards to go, and the down number. Computing the designed play provides predictions for each receiver's route time and ORPSP value.
+
+Coaches have the ability to fully create a pass playbook with critical information to assist in decision-making. Together with the quarterbacks, coaches can study the critical zones that need to be prioritized at different moments of a play.
 
 ### Conclusion
