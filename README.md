@@ -59,7 +59,7 @@ The ORPSP metric is computed to all receiver routes from the previous example.
     Figure 5. Example play with the ORPSP metric
 </p>
 
-In the above example, the quarterback targets the receiver with the highest ORPSP score. The receiver ends up catching the ball for a gain of more than 10 yards. In the example bellow, the quarterback focuses on his right side while the receiver with the highest ORPSP score in on his left. This receiver is indeed open as the quarterback ends up beeing sacked.
+In the above example, the quarterback targets the receiver with the highest ORPSP score. The receiver ends up catching the ball for a gain of more than 10 yards. In the example bellow, the quarterback focuses on his right side while the receiver with the highest ORPSP score in on his left.[[1]](#1) This receiver is indeed open as the quarterback ends up beeing sacked.
 
 <p align="center">
     <img src="reports/animations/animated_play_orpsp_sack.gif">
@@ -76,9 +76,9 @@ With the ORPSP metric computed for all routes run by the receivers, it is possib
 
 There is a strong correlation between catch rate and targeted average ORPSP, with a Pearson coefficient of 0.57. This confirms that the lower the receiver's average probability of getting open, the lower their catch rate will be.
 
-Comparing the two wide receivers, JuJu Smith-Schuster and Amari Cooper, based solely on their catch rate would favor JuJu Smith-Schuster. His catch rate is 0.73, significantly higher than Amari Cooper's 0.57. However, taking the targeted average ORPSP into account reveals an explanation for this difference. Both receivers are performing as expected based on the likelihood of getting open. Amari Cooper runs routes that are less likely to allow him to get open, which leads to a lower catch rate. He ended up ranked 15th in the PFF 2022 wide receiver regular season rankings, which noted: "Cooper’s performance flew under the radar in 2022."
+Comparing the two wide receivers, JuJu Smith-Schuster and Amari Cooper, based solely on their catch rate would favor JuJu Smith-Schuster. His catch rate is 0.73, significantly higher than Amari Cooper's 0.57. However, taking the targeted average ORPSP into account reveals an explanation for this difference. Both receivers are performing as expected based on the likelihood of getting open. Amari Cooper runs routes that are less likely to allow him to get open, which leads to a lower catch rate. He ended up ranked 15th in the PFF 2022 wide receiver regular season rankings, which noted: "Cooper’s performance flew under the radar in 2022".[[2]](#2)
 
-One player performing above expectations is Austin Ekeler. His catch rate is significantly higher than the average receiver with a same targeted average ORPSP. He went on to record the most catches by a running back in a single season in Chargers history.
+One player performing above expectations is Austin Ekeler. His catch rate is significantly higher than the average receiver with a same targeted average ORPSP. He went on to record the most catches by a running back in a single season in Chargers history.[[3]](#3)
 
 It is also possible to contextualize quarterbacks' performances by comparing their completion rate to the average ORPSP of the receivers they target. The targeted receiver average ORPSP value indicates whether a quarterback tends to take more or fewer risks.
 
@@ -89,9 +89,9 @@ It is also possible to contextualize quarterbacks' performances by comparing the
 
 The correlation between completion rate and targeted receiver average ORPSP is significant, with a Pearson coefficient of 0.44. A quarterback that takes fewer risks is more likely to have a high completion rate.
 
-Geno Smith leads all quarterbacks in completion rate at 0.74. Based on his targeted receiver average ORPSP, he is performing well above expectations while taking intermediate risks. By the end of the season, he set several Seahawks franchise records, including the highest single-season completion percentage and the most pass completions in a single season. Geno Smith was named Comeback Player of the Year by the Associated Press and the Pro Football Writers of America (PFWA). In addition, the PFWA named him as their Most Improved Player.
+Geno Smith leads all quarterbacks in completion rate at 0.74. Based on his targeted receiver average ORPSP, he is performing well above expectations while taking intermediate risks. By the end of the season, he set several Seahawks franchise records, including the highest single-season completion percentage and the most pass completions in a single season. Geno Smith was named Comeback Player of the Year by the Associated Press and the Pro Football Writers of America (PFWA).[[4]](#4)[[5]](#5) In addition, the PFWA named him as their Most Improved Player.[[6]](#6)
 
-Matt Ryan also records an impressive completion rate of 0.72, ranking third among quarterbacks with more than 50 throws. However, he is the quarterback taking the fewest risks and has the highest targeted receiver average ORPSP. His completion rate aligns with what is expected from him based on the risks he takes. Matt Ryan was benched during the season, which would turn out to be his last before retiring.
+Matt Ryan also records an impressive completion rate of 0.72, ranking third among quarterbacks with more than 50 throws. However, he is the quarterback taking the fewest risks and has the highest targeted receiver average ORPSP. His completion rate aligns with what is expected from him based on the risks he takes. Matt Ryan was benched during the season, which would turn out to be his last before retiring.[[7]](#7)[[8]](#8)[[9]](#9)
 
 
 ### Designing a Pass Playbook
@@ -114,3 +114,22 @@ The analysis of the ORPSP model allows for a deeper understanding of how route t
 The ability to contextualize performance data with route difficulty and risk-taking helps identify overperforming players, such as receiver Austin Ekeler and quarterback Geno Smith.
 
 Ultimately, this methodology empowers coaches to design more effective playbooks, prioritize high ORPSP, and tailor strategies that enhance the likelihood of success on the field.
+
+### References
+<a id="1">[1]</a> [First sack of 2022! Von Miller takes down Matt Stafford | Bills at Rams](https://www.buffalobills.com/video/first-sack-of-2022-von-miller-takes-down-matt-stafford-bills-at-rams). Buffalo Bills.
+
+<a id="2">[2]</a> Zoltán Buday (Feb 28, 2023). [Ranking the 25 best wide receivers from the 2022 NFL regular season](https://www.pff.com/news/nfl-final-2022-wide-receiver-rankings). Pro Football Focus.
+
+<a id="3">[3]</a> [Ekeler Surpasses L.T. for Most Catches by Bolts RB in Single Season on Shifty 17-Yard Catch](https://www.chargers.com/video/ekeler-surpasses-lt-most-catches-single-season-2022). Chargers.
+
+<a id="4">[4]</a> [AP Comeback Player of the Year Winners](https://www.pro-football-reference.com/awards/ap-comeback-player-award.htm). Pro Football Reference.
+
+<a id="5">[5]</a> [PFWA Comeback Player of the Year Winners](https://www.pro-football-reference.com/awards/pfwa-comeback-player-award.htm). Pro Football Reference.
+
+<a id="6">[6]</a> [PFWA Most Improved Player Winners](https://www.pro-football-reference.com/awards/pfwa-most-improved-player-award.htm). Pro Football Reference.
+
+<a id="7">[7]</a> Nick Shook (Dec 21, 2022). [Colts bench Matt Ryan, name Nick Foles starting QB for Monday's game vs. Chargers](https://www.nfl.com/news/colts-bench-matt-ryan-name-nick-foles-starting-qb-chargers-monday-night). NFL.
+
+<a id="8">[8]</a> JJ Stankevitz (Mar 15, 2023). [Colts release QB Matt Ryan](https://www.colts.com/news/matt-ryan-released-quarterback-2023-nfl-free-agency-falcons). Colts.
+
+<a id="9">[9]</a> Terrin Waack (Apr 22, 2024). [Matt Ryan announces retirement, signs one-day contract with Atlanta to retire a Falcon](https://www.atlantafalcons.com/news/matt-ryan-retirement-one-day-contract-quarterback). Atlanta Falcons.
