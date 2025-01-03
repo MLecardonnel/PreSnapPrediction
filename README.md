@@ -32,7 +32,7 @@ For each route run, a reception zone and its route time are determined by identi
 
 <p align="center">
     <img src="reports/animations/animated_play_routes.gif">
-    Figure 3. Example play with reception zones
+    Figure 3. Example play with reception zones represented by blue circles
 </p>
 
 
@@ -56,14 +56,14 @@ The ORPSP metric is computed to all receiver routes from the previous example.
 
 <p align="center">
     <img src="reports/animations/animated_play_orpsp.gif">
-    Figure 5. Example play with the ORPSP metric
+    Figure 5. Example play with the ORPSP metric displayed in a red color scale
 </p>
 
 In the above example, the quarterback targets the receiver with the highest ORPSP score. The receiver ends up catching the ball for a gain of more than 10 yards. In the example bellow, the quarterback focuses on his right side while the receiver with the highest ORPSP score in on his left.[[1]](#1) This receiver is indeed open as the quarterback ends up beeing sacked.
 
 <p align="center">
     <img src="reports/animations/animated_play_orpsp_sack.gif">
-    Figure 6. Second example play with the ORPSP metric
+    Figure 6. Second example play with the ORPSP metric displayed in a red color scale
 </p>
 
 ### ORPSP Metric Analysis
