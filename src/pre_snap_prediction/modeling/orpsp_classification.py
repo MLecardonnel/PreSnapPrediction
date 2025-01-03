@@ -100,7 +100,7 @@ def orpsp_train_test_split(
     return x_train, x_test, y_train, y_test
 
 
-def train_orpsp_classification(x_train: pl.DataFrame, y_train: pl.DataFrame, max_depth: int = 6) -> CatBoostClassifier:
+def train_orpsp_classification(x_train: pl.DataFrame, y_train: pl.DataFrame, max_depth: int = 5) -> CatBoostClassifier:
     """Trains a CatBoost classification model to predict ORPSP.
 
     Parameters

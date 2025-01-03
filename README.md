@@ -74,7 +74,7 @@ With the ORPSP metric computed for all routes run by the receivers, it is possib
     Figure 7. Receivers performance: catch rate VS targeted average ORPSP
 </p>
 
-There is a strong correlation between catch rate and targeted average ORPSP, with a Pearson coefficient of 0.57. This confirms that the lower the receiver's average probability of getting open, the lower their catch rate will be.
+There is a strong correlation between catch rate and targeted average ORPSP, with a Pearson coefficient of 0.52. This confirms that the lower the receiver's average probability of getting open, the lower their catch rate will be.
 
 Comparing the two wide receivers, JuJu Smith-Schuster and Amari Cooper, based solely on their catch rate would favor JuJu Smith-Schuster. His catch rate is 0.73, significantly higher than Amari Cooper's 0.57. However, taking the targeted average ORPSP into account reveals an explanation for this difference. Both receivers are performing as expected based on the likelihood of getting open. Amari Cooper runs routes that are less likely to allow him to get open, which leads to a lower catch rate. He ended up ranked 15th in the PFF 2022 wide receiver regular season rankings, which noted: "Cooper’s performance flew under the radar in 2022".[[2]](#2)
 
@@ -87,7 +87,7 @@ It is also possible to contextualize quarterbacks' performances by comparing the
     Figure 8. Quarterbacks performance: Completion rate VS targeted receiver average ORPSP
 </p>
 
-The correlation between completion rate and targeted receiver average ORPSP is significant, with a Pearson coefficient of 0.44. A quarterback that takes fewer risks is more likely to have a high completion rate.
+The correlation between completion rate and targeted receiver average ORPSP is significant, with a Pearson coefficient of 0.42. A quarterback that takes fewer risks is more likely to have a high completion rate.
 
 Geno Smith leads all quarterbacks in completion rate at 0.74. Based on his targeted receiver average ORPSP, he is performing well above expectations while taking intermediate risks. By the end of the season, he set several Seahawks franchise records, including the highest single-season completion percentage and the most pass completions in a single season. Geno Smith was named Comeback Player of the Year by the Associated Press and the Pro Football Writers of America (PFWA).[[4]](#4)[[5]](#5) In addition, the PFWA named him as their Most Improved Player.[[6]](#6)
 
