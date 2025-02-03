@@ -231,8 +231,8 @@ def process_route_tracking(
     return processed_route_tracking
 
 
-def _quadratic_fit(args: list[pl.Series]) -> list[float]:
-    coefficients = np.polyfit(args[0].to_numpy(), args[1].to_numpy(), 2)
+def _quadratic_fit(x: pl.Series, y: pl.Series) -> list[float]:
+    coefficients = np.polyfit(x.to_numpy(), y.to_numpy(), 2)
     return [coefficients[0], coefficients[1], coefficients[2]]
 
 
@@ -263,7 +263,9 @@ def compute_route_features(processed_route_tracking: pl.DataFrame) -> pl.DataFra
         A Polars DataFrame containing various computed route features for each player in each play.
     """
     quadratic_fit_results = processed_route_tracking.group_by(["gameId", "playId", "nflId"]).agg(
-        pl.map_groups(exprs=["relative_x", "relative_y"], function=_quadratic_fit).alias("coefficients")
+        pl.map_groups(exprs=["relative_x", "relative_y"], function=lambda x: _quadratic_fit(x[0], x[1])).alias(
+            "coefficients"
+        )
     )
 
     quadratic_fit_results = quadratic_fit_results.with_columns(
